@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>معهد بدر السلام</title>
+    <!-- استدعاء خطوط عربية فخمة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;500;700;900&family=Tajawal:wght@300;500;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- المتغيرات اللونية الديناميكية --- */
+        :root {
+            --primary-hue: 45; 
+            --primary-saturation: 80%;
+            --primary-lightness: 50%;
+            
+            --primary-color: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
+            --primary-glow: hsla(var(--primary-hue), var(--primary-saturation), var(--primary-lightness), 0.5);
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: hsla(var(--primary-hue), var(--primary-saturation), 80%, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: auto; /* تعطيل السكرول التلقائي للصفحة لتجنب التعارض مع JS */
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #020507;
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* --- خلفية الفضاء --- */
+        #space-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at bottom, #0b1021 0%, #000000 100%);
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- الشريط العلوي للتطبيق --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            display: flex;
+            justify-content: space-between; /* توزيع المسافات */
+            align-items: center;
+            padding: 0 20px;
+            background: rgba(5, 5, 10, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .icon-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            z-index: 101; /* فوق الخلفية */
+        }
+
+        .icon-btn:active {
+            transform: scale(0.9);
+            background: var(--primary-color);
+        }
+
+        /* زر القائمة (يمين في RTL لأنه العنصر الأول في الفليكس) */
+        .menu-btn {
+            order: 1; /* ترتيب 1 */
+        }
+
+        /* زر الإشعارات (يسار في RTL لأنه العنصر الأخير في الفليكس) */
+        .notification-link {
+            order: 2; /* ترتيب 2 */
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 8px;
+            height: 8px;
+            background-color: #ff4d4d;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #ff4d4d;
+        }
+
+        /* --- القائمة الجانبية (Side Drawer) --- */
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 280px;
+            height: 100%;
+            background: rgba(15, 20, 35, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 200;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 1px solid var(--glass-border);
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .side-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            backdrop-filter: blur(2px);
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drawer-link {
+            display: flex;
+            align-items: center;
+            padding: 18px 30px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-family: 'Tajawal', sans-serif;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .drawer-link:hover {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05));
+            color: var(--primary-color);
+            padding-right: 35px;
+        }
+
+        .drawer-link svg {
+            width: 24px;
+            height: 24px;
+            margin-left: 15px;
+            fill: currentColor;
+        }
+
+        /* --- النافذة المنبثقة (Modal) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 300;
+            opacity: 0;
+            visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: rgba(20, 25, 40, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--primary-color);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            text-align: center;
+            transform: scale(0.8);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            color: var(--primary-color);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .modal-text {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            text-align: justify;
+        }
+
+        .modal-close-btn {
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .modal-close-btn:hover {
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* --- منطقة الشعار والعنوان --- */
+        .hero-section {
+            padding-top: 100px;
+            padding-bottom: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            margin: 0 auto 1.5rem;
+            width: 130px;
+            height: 130px;
+            perspective: 1000px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 220px; height: 220px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: pulseGlow 4s ease-in-out infinite;
+            filter: blur(20px);
+        }
+
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 30px var(--primary-glow);
+            animation: floatLogo 6s ease-in-out infinite;
+        }
+
+        h1.site-title {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(to bottom, #fff 20%, var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+
+        /* --- الكاروسيل الأفقي 3D المحسن --- */
+        .carousel-section {
+            position: relative;
+            z-index: 2;
+            padding: 10px 0 60px;
+            overflow: hidden;
+        }
+
+        .carousel-container {
+            width: 100%;
+            height: 400px;
+            perspective: 1200px;
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            padding: 0 50vw 0 20px;
+            scrollbar-width: none;
+        }
+
+        .carousel-container::-webkit-scrollbar { display: none; }
+
+        .carousel-track {
+            display: flex;
+            gap: 20px;
+            padding-right: 50vw;
+        }
+
+        .card-3d {
+            position: relative;
+            flex: 0 0 auto;
+            width: 260px;
+            height: 340px;
+            background: rgba(20, 25, 40, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            scroll-snap-align: center;
+            /* تحسين الأداء */
+            will-change: transform, opacity; 
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform-origin: center center;
+        }
+
+        .card-content {
+            transform: translateZ(40px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .img-box-3d {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, transparent, var(--primary-color));
+            margin-bottom: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .img-box-3d img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #0f1423;
+        }
+
+        .card-3d h3 {
+            font-size: 1.1rem;
+            text-align: center;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .card-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: auto;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- زر تغيير الألوان --- */
+        .theme-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(20, 20, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 0 15px var(--primary-glow);
+            transition: transform 0.3s;
+        }
+
+        .theme-btn:hover { transform: scale(1.1) rotate(90deg); }
+
+        .theme-icon {
+            width: 22px; height: 22px;
+            background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+            border-radius: 50%;
+        }
+
+        .palette {
+            position: fixed;
+            bottom: 90px;
+            left: 25px;
+            background: rgba(15, 20, 35, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .palette.active { opacity: 1; visibility: visible; transform: translateY(0); }
+
+        .color-option {
+            width: 35px; height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        
+        .color-option.selected { border-color: white; transform: scale(1.1); box-shadow: 0 0 10px currentColor; }
+
+        footer {
+            text-align: center; padding: 30px 20px 100px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            position: relative; z-index: 2;
+        }
+
+        /* Animations */
+        @keyframes pulseGlow { 0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.15); } }
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+        @media (min-width: 769px) {
+            .app-header { padding: 0 40px; }
+            .logo-wrapper { width: 160px; height: 160px; }
+            .logo-glow { width: 280px; height: 280px; }
+            h1.site-title { font-size: 3rem; }
+            .card-3d { width: 300px; height: 380px; }
+            .img-box-3d { width: 120px; height: 120px; }
+            .carousel-container { height: 450px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- محرك الفضاء -->
+    <canvas id="space-canvas"></canvas>
+    <div class="vignette"></div>
+
+    <!-- النافذة المنبثقة -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitle">عنوان</h3>
+            <p class="modal-text" id="modalContent">نص النافذة</p>
+            <button class="modal-close-btn" onclick="closeModal()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- القائمة الجانبية -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <aside class="side-drawer" id="sideDrawer">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <img src="https://i.postimg.cc/bNqb3yWJ/5866036315810368735-121.jpg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary-color); margin-bottom: 10px;">
+            <h3 style="color: white;">القائمة</h3>
+        </div>
+        <!-- عنصر القائمة 1 -->
+        <div class="drawer-link" onclick="openModal('حول المعهد القرآني', 'معهد بدر السلام هو مؤسسة تعليمية إسلامية رائدة، تهدف إلى نشر علوم القرآن الكريم وتجويده وتحفيظه، وتخريج جيل قرآني متمسك بتعاليم دينه، من خلال نخبة من المشايخ المتقنين.')">
+            <svg viewBox="0 0 24 24"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8 8 8z"/></svg>
+            حول المعهد القرآني
+        </div>
+        <!-- عنصر القائمة 2 -->
+        <div class="drawer-link" onclick="openModal('سياسة الخصوصية', 'نحن في معهد بدر السلام نلتزم بحماية خصوصية بياناتك. أي معلومات شخصية تقدمها لنا ستُستخدم لغرض تحسين تجربتك التعليمية فقط، ولن يتم مشاركتها مع أي طرف ثالث دون موافقتك الصريحة.')">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            سياسة الخصوصية
+        </div>
+    </aside>
+
+    <!-- الهيدر -->
+    <header class="app-header">
+        <!-- زر القائمة (يمين) - عنصر أول -->
+        <div class="icon-btn menu-btn" onclick="toggleMenu()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </div>
+
+        <!-- زر الإشعارات (يسار) - عنصر آخر -->
+        <a href="notifications.html" class="icon-btn notification-link">
+            <div class="notification-dot"></div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+        </a>
+    </header>
+
+    <div class="hero-section">
+        <div class="logo-wrapper">
+            <div class="logo-glow"></div>
+            <img src="https://i.postimg.cc/bNqb3yWJ/5866036315810368735-121.jpg" alt="شعار المعهد" class="logo-img">
+        </div>
+        
+        <h1 class="site-title" id="typewriter"></h1>
+    </div>
+
+    <main class="carousel-section">
+        <!-- تم حذف عنوان هيئة التدريس -->
+        
+        <div class="carousel-container" id="carousel">
+            <div class="carousel-track">
+                <!-- المدرسين -->
+                <a href="Maad.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/MKQdRKCP/5866036315810368746-121.jpg" alt="معاذ"></div>
+                        <h3>المدرس معاذ المحمد</h3>
+                        <span class="card-badge">مدرس قرآن</span>
+                    </div>
+                </a>
+                <a href="Awad.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/kXs9C3CT/5866036315810368745-121.jpg" alt="عوض"></div>
+                        <h3>المدرس عوض فطراوي</h3>
+                        <span class="card-badge">مدرس تجويد</span>
+                    </div>
+                </a>
+                <a href="Taha.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/rFVXQn49/5866036315810368748-121.jpg" alt="طه"></div>
+                        <h3>المدرس طه المحمد</h3>
+                        <span class="card-badge">حفص</span>
+                    </div>
+                </a>
+                <a href="Modar.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/50BTmL2c/5866036315810368747-121.jpg" alt="مضر"></div>
+                        <h3>المدرس مضر الشعار</h3>
+                        <span class="card-badge">قراءات</span>
+                    </div>
+                </a>
+                <a href="Tarage.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/KvHqBJDP/5866036315810368737-121.jpg" alt="تراجي"></div>
+                        <h3>المدرسة تراجي المصطفى</h3>
+                        <span class="card-badge">تحفيظ</span>
+                    </div>
+                </a>
+                <a href="Tahane.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/9QNDWq2n/5866036315810368736-121.jpg" alt="تهاني"></div>
+                        <h3>المدرسة تهاني</h3>
+                        <span class="card-badge">تجويد</span>
+                    </div>
+                </a>
+                <a href="Marwa.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/6Q5fPZcT/5866036315810368740-121.jpg" alt="مروة"></div>
+                        <h3>المدرسة مروة المصطفى</h3>
+                        <span class="card-badge">قسم النساء</span>
+                    </div>
+                </a>
+                <a href="Rawda.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/8c8WTfRC/5866036315810368744-121.jpg" alt="روضة"></div>
+                        <h3>المدرسة روضة المصطفى</h3>
+                        <span class="card-badge">حفظ</span>
+                    </div>
+                </a>
+                <a href="FatemaF.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/fy2NxmBp/5866036315810368742-121.jpg" alt="فاطمة"></div>
+                        <h3>المدرسة فاطمة فطراوي</h3>
+                        <span class="card-badge">أحكام</span>
+                    </div>
+                </a>
+                <a href="FatemaM.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/NjRntRR6/5866036315810368739-121.jpg" alt="فاطمة"></div>
+                        <h3>المدرسة فاطمة المحمود</h3>
+                        <span class="card-badge">ترتيل</span>
+                    </div>
+                </a>
+                <a href="Aia.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/6q3s5TBK/5866036315810368743-121.jpg" alt="اية"></div>
+                        <h3>المدرسة اية الايوب</h3>
+                        <span class="card-badge">قراءة</span>
+                    </div>
+                </a>
+                <a href="Marwazainab.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/Dzy6JJTH/5866036315810368738-121.jpg" alt="مروة"></div>
+                        <h3>المدرسة مروة المصطفى</h3>
+                        <span class="card-badge">مراجعة</span>
+                    </div>
+                </a>
+                <a href="Aliaa.html" class="card-3d">
+                    <div class="card-content">
+                        <div class="img-box-3d"><img src="https://i.postimg.cc/cCsx7sZF/5866036315810368741-121.jpg" alt="علياء"></div>
+                        <h3>المدرسة علياء عبدالقادر</h3>
+                        <span class="card-badge">تسميع</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>جميع الحقوق محفوظة &copy; <span style="color: var(--primary-color);">معهد بدر السلام</span> 2026</p>
+    </footer>
+
+    <!-- زر تغيير اللون -->
+    <div class="theme-btn" id="themeToggle">
+        <div class="theme-icon"></div>
+    </div>
+    
+    <div class="palette" id="palette">
+        <div class="color-option" style="background: #d4af37;" data-hue="45" title="ذهبي"></div>
+        <div class="color-option" style="background: #00d4ff;" data-hue="190" title="أزرق"></div>
+        <div class="color-option" style="background: #bd00ff;" data-hue="280" title="بنفسجي"></div>
+        <div class="color-option" style="background: #ff4d4d;" data-hue="0" title="أحمر"></div>
+        <div class="color-option" style="background: #00ff88;" data-hue="150" title="أخضر"></div>
+        <div class="color-option" style="background: #ff0099;" data-hue="330" title="وردي"></div>
+    </div>
+
+    <script>
+        // --- 1. نظام إدارة الألوان ---
+        const root = document.documentElement;
+        const themeBtn = document.getElementById('themeToggle');
+        const palette = document.getElementById('palette');
+        const colorOptions = document.querySelectorAll('.color-option');
+
+        themeBtn.addEventListener('click', () => palette.classList.toggle('active'));
+
+        colorOptions.forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                const hue = e.target.getAttribute('data-hue');
+                root.style.setProperty('--primary-hue', hue);
+                colorOptions.forEach(c => c.classList.remove('selected'));
+                e.target.classList.add('selected');
+                initSpaceBackground();
+            });
+        });
+
+        // --- 2. تأثير الكتابة ---
+        const title = "معهد بدر السلام";
+        const titleEl = document.getElementById('typewriter');
+        let i = 0;
+        function typeWriter() {
+            if (i < title.length) {
+                titleEl.innerHTML += title.charAt(i);
+                i++;
+                setTimeout(typeWriter, 80);
+            }
+        }
+        window.addEventListener('load', typeWriter);
+
+        // --- 3. إدارة القائمة الجانبية ---
+        const sideDrawer = document.getElementById('sideDrawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+
+        function toggleMenu() {
+            sideDrawer.classList.toggle('open');
+            drawerOverlay.classList.toggle('open');
+        }
+
+        function closeMenu() {
+            sideDrawer.classList.remove('open');
+            drawerOverlay.classList.remove('open');
+        }
+
+        drawerOverlay.addEventListener('click', closeMenu);
+
+        // --- 4. إدارة النوافذ المنبثقة (Modals) ---
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal(title, text) {
+            modalTitle.textContent = title;
+            modalContent.textContent = text;
+            modalOverlay.classList.add('active');
+            closeMenu(); // إغلاق القائمة تلقائياً
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        modalOverlay.addEventListener('click', (e) => {
+            if(e.target === modalOverlay) closeModal();
+        });
+
+        // --- 5. كاروسيل 3D أفقي (Fixed & Smooth) ---
+        // استخدام requestAnimationFrame لضمان عدم الاهتزاز
+        const carousel = document.getElementById('carousel');
+        const cards = document.querySelectorAll('.card-3d');
+        let animationFrameId;
+
+        function animateCarousel() {
+            const centerX = carousel.scrollLeft + carousel.offsetWidth / 2;
+
+            cards.forEach(card => {
+                const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                const distance = cardCenter - centerX;
+                
+                // تقليل معامل الدوران لجعل الحركة أكثر استقراراً
+                const rotateY = distance * -0.1; 
+                const scale = Math.max(0.7, 1 - Math.abs(distance) * 0.0012);
+                const opacity = Math.max(0.4, 1 - Math.abs(distance) * 0.0018);
+                
+                card.style.transform = `perspective(1000px) rotateY(${rotateY}deg) scale(${scale})`;
+                card.style.opacity = opacity;
+                
+                // التباين اللوني للعنصر النشط
+                if (Math.abs(distance) < card.offsetWidth / 2) {
+                    card.style.borderColor = 'var(--primary-color)';
+                    card.style.boxShadow = '0 0 25px var(--primary-glow)';
+                    card.style.zIndex = 10;
+                } else {
+                    card.style.borderColor = 'var(--glass-border)';
+                    card.style.boxShadow = 'none';
+                    card.style.zIndex = 1;
+                }
+            });
+
+            animationFrameId = requestAnimationFrame(animateCarousel);
+        }
+
+        // تشغيل حلقة الأنيميشن بشكل دائم
+        animationFrameId = requestAnimationFrame(animateCarousel);
+
+
+        // --- 6. محرك الفضاء السلس ---
+        const canvas = document.getElementById('space-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let stars = [], nebulas = [];
+        let mouseX = 0, mouseY = 0;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initSpaceBackground();
+        }
+        window.addEventListener('resize', resize);
+        
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - width / 2) * 0.03;
+            mouseY = (e.clientY - height / 2) * 0.03;
+        });
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 1.5;
+                this.speed = Math.random() * 0.15 + 0.02;
+                this.alpha = Math.random();
+                this.twinkle = Math.random() * 0.02;
+            }
+            update() {
+                this.y += this.speed;
+                if (this.y > height) this.y = 0;
+                this.alpha += this.twinkle;
+                if (this.alpha > 1 || this.alpha < 0.2) this.twinkle = -this.twinkle;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x + mouseX, this.y + mouseY, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        class Nebula {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.radius = Math.random() * 400 + 200;
+            }
+            draw() {
+                const grad = ctx.createRadialGradient(this.x - mouseX, this.y - mouseY, 0, this.x - mouseX, this.y - mouseY, this.radius);
+                const color = getComputedStyle(root).getPropertyValue('--primary-color').trim();
+                grad.addColorStop(0, color.replace(')', ', 0.08)'));
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, width, height);
+            }
+        }
+
+        function initSpaceBackground() {
+            stars = []; nebulas = [];
+            for(let i=0; i<300; i++) stars.push(new Star());
+            for(let i=0; i<4; i++) nebulas.push(new Nebula());
+        }
+
+        function animateSpace() {
+            ctx.clearRect(0, 0, width, height);
+            nebulas.forEach(n => n.draw());
+            stars.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(animateSpace);
+        }
+
+        resize();
+        animateSpace();
+        document.querySelector('.color-option[data-hue="45"]').classList.add('selected');
+
+    </script>
+</body>
+</html>
