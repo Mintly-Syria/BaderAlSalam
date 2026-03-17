@@ -183,6 +183,16 @@
         .btn-cancel { background: transparent; color: var(--primary-gold); border: 1px solid var(--primary-gold); margin-top: 5px; }
         .btn-modal:active { transform: scale(0.98); }
 
+        /* --- نافذة الحظر --- */
+        .ban-alert {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px;
+        }
+        .ban-icon { font-size: 4rem; color: var(--danger-color); margin-bottom: 20px; animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
+
         /* --- الإشعارات --- */
         .notifications-container { padding: 20px; max-width: 800px; margin: 0 auto; }
         .notification-card { background: rgba(13, 41, 25, 0.8); border: 1px solid var(--glass-border); border-radius: 15px; padding: 20px; margin-bottom: 15px; transition: 0.3s; position: relative; overflow: hidden; }
@@ -212,9 +222,12 @@
             border-right: 3px solid transparent; transition: 0.3s;
         }
         .user-item-row.banned { border-right-color: var(--danger-color); opacity: 0.6; }
+        .user-item-row.device-banned { border-right-color: #ff0000; background: rgba(255, 0, 0, 0.05); }
         .user-item-row:hover { background: rgba(255,255,255,0.06); }
-        .user-info h4 { color: var(--primary-gold); margin-bottom: 5px; }
-        .user-info span { font-size: 0.8rem; color: var(--text-muted); }
+        .user-info h4 { color: var(--primary-gold); margin-bottom: 5px; font-size: 1rem; }
+        .user-info span { font-size: 0.8rem; color: var(--text-muted); display: block; }
+        
+        .user-actions { display: flex; gap: 8px; }
 
         .admin-users-list-item { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid transparent; transition: 0.3s; cursor: pointer; }
         .admin-users-list-item:hover { background: rgba(212, 175, 55, 0.05); border-color: var(--primary-gold); }
@@ -249,6 +262,11 @@
         .widget-title { font-size: 1.2rem; color: var(--primary-gold); font-weight: bold; }
         .delete-btn { background: rgba(229, 62, 62, 0.1); border: none; color: var(--danger-color); width: 35px; height: 35px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .delete-btn:hover { background: var(--danger-color); color: white; }
+        
+        .ban-device-btn { background: rgba(255, 0, 0, 0.1); border: 1px solid var(--danger-color); color: var(--danger-color); width: 35px; height: 35px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .ban-device-btn:hover { background: var(--danger-color); color: white; }
+        .ban-device-btn.banned { background: var(--danger-color); color: white; }
+
         .btn-logout { background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; }
         .btn-logout:hover { background: var(--danger-color); color: white; }
         
@@ -276,6 +294,14 @@
     </style>
 </head>
 <body>
+
+    <!-- نافذة الحظر -->
+    <div id="banAlertScreen" class="ban-alert" style="display: none;">
+        <div class="ban-icon">🚫</div>
+        <h2 style="color: var(--danger-color); margin-bottom: 10px;">تم حظرك من الموقع</h2>
+        <p style="color: #ccc; max-width: 400px;">لقد قام المدير بحظر دخولك. لا يمكنك استخدام هذا الموقع أو إنشاء حسابات جديدة من هذا الجهاز.</p>
+        <button onclick="location.reload()" style="margin-top: 30px; padding: 10px 30px; background: transparent; border: 1px solid #555; color: #777; border-radius: 20px; cursor: not-allowed;">محاولة مجدداً</button>
+    </div>
 
     <!-- نافذة الحذف الموحدة -->
     <div class="modal-overlay" id="deleteModal">
@@ -557,9 +583,51 @@
         let selectedMessageForDelete = null;
         let isMyMessage = false; 
         let currentUserRole = 'user';
+        let currentDeviceId = null;
+
+        // --- Device ID Logic (لمنع إنشاء حساب جديد) ---
+        function getDeviceId() {
+            let id = localStorage.getItem('badrsalam_device_id');
+            if (!id) {
+                id = 'dev_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+                localStorage.setItem('badrsalam_device_id', id);
+            }
+            return id;
+        }
+
+        currentDeviceId = getDeviceId();
+
+        // --- التحقق من الحظر العام (جهاز أو حساب) ---
+        async function checkGlobalBanStatus(user) {
+            if (!user) return false;
+            
+            // 1. التحقق من حظر الجهاز
+            const deviceDoc = await getDoc(doc(db, "bannedDevices", currentDeviceId));
+            if (deviceDoc.exists()) {
+                showBanScreen();
+                return true;
+            }
+
+            // 2. التحقق من حسب المستخدم
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists() && userDoc.data().isBanned) {
+                showBanScreen();
+                return true;
+            }
+            
+            return false;
+        }
+
+        function showBanScreen() {
+            document.getElementById('banAlertScreen').style.display = 'flex';
+            signOut(auth).catch(() => {}); // تسجيل خروج صامت
+        }
 
         // --- التنقل ---
         window.navigateTo = (viewId) => {
+            // منع التنقل إذا تم حظر الجهاز
+            if(document.getElementById('banAlertScreen').style.display === 'flex') return;
+
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
             document.getElementById(`view-${viewId}`).classList.add('active-view');
             window.scrollTo(0, 0);
@@ -577,22 +645,36 @@
             }
         };
 
-        // --- تسجيل دخول المستخدم (الاسم وكلمة المرور) ---
+        // --- تسجيل دخول المستخدم ---
         document.getElementById('loginUserForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('userName').value.trim();
             const password = document.getElementById('userPassword').value.trim();
             const errorMsg = document.getElementById('loginUserError');
             
+            // 1. فحص الجهاز أولاً قبل محاولة تسجيل الدخول
+            const deviceDoc = await getDoc(doc(db, "bannedDevices", currentDeviceId));
+            if (deviceDoc.exists()) {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = 'هذا الجهاز محظور من استخدام الموقع.';
+                return;
+            }
+
             if(!name || !password) return;
 
-            // تحويل الاسم إلى بريد إلكتروني ثابت
             const cleanName = name.toLowerCase().replace(/\s+/g, '');
             const email = `${cleanName}@badrsalam.app`;
 
             try {
-                // محاولة تسجيل الدخول أولاً
-                await signInWithEmailAndPassword(auth, email, password);
+                // محاولة تسجيل الدخول
+                const userCred = await signInWithEmailAndPassword(auth, email, password);
+                
+                // تحديث معرف الجهاز عند كل تسجيل دخول ناجح
+                await updateDoc(doc(db, "users", userCred.user.uid), {
+                    deviceId: currentDeviceId,
+                    lastLogin: serverTimestamp()
+                });
+                
                 errorMsg.style.display = 'none';
             } catch (error) {
                 // إذا فشل الدخول، حاول إنشاء حساب جديد
@@ -601,12 +683,13 @@
                         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                         const user = userCredential.user;
                         
-                        // حفظ بيانات المستخدم في Firestore
+                        // حفظ بيانات المستخدم مع معرف الجهاز
                         await setDoc(doc(db, "users", user.uid), {
                             name: name,
                             email: email,
                             role: 'user',
                             isBanned: false,
+                            deviceId: currentDeviceId, // ربط الجهاز بالحساب
                             createdAt: serverTimestamp()
                         });
                         errorMsg.style.display = 'none';
@@ -626,12 +709,11 @@
             }
         });
 
-        // --- تسجيل دخول المدير (البريد الإلكتروني) ---
+        // --- تسجيل دخول المدير ---
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
                 await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-                // onAuthStateChanged سيقوم بالباقي
             } catch (error) {
                 document.getElementById('loginError').style.display = 'block';
                 document.getElementById('loginError').textContent = 'خطأ: البريد أو كلمة المرور غير صحيحة.';
@@ -641,21 +723,31 @@
         // --- مراقبة الحالة ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // فحص الحظر فوراً
+                const isBanned = await checkGlobalBanStatus(user);
+                if (isBanned) return;
+
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 
                 if (userDoc.exists()) {
                     const data = userDoc.data();
-                    
-                    if (data.isBanned) {
-                        alert('تم حظرك من قبل الإدارة.');
-                        await signOut(auth);
-                        window.location.reload();
-                        return;
-                    }
-
                     currentUserData = data;
                     currentUserRole = data.role || 'user';
                     document.getElementById('drawerUserName').textContent = data.name;
+
+                    // الاستماع لتغييرات الحظر بالوقت الفعلي
+                    onSnapshot(doc(db, "users", user.uid), (doc) => {
+                        if (doc.exists() && doc.data().isBanned) {
+                            showBanScreen();
+                        }
+                    });
+
+                    // الاستماع لتغييرات حظر الجهاز
+                    onSnapshot(doc(db, "bannedDevices", currentDeviceId), (doc) => {
+                        if (doc.exists()) {
+                            showBanScreen();
+                        }
+                    });
 
                     if (currentUserRole === 'admin') {
                         document.getElementById('loginLink').style.display = 'none';
@@ -666,14 +758,6 @@
                         document.getElementById('adminLink').style.display = 'none';
                         navigateTo('home');
                     }
-
-                    onSnapshot(doc(db, "users", user.uid), (doc) => {
-                        if (doc.exists() && doc.data().isBanned) {
-                            alert('لقد تم حظرك.');
-                            signOut(auth).then(() => window.location.reload());
-                        }
-                    });
-
                 } else {
                     if(user.email.includes('@badrsalam.app')) {
                         await signOut(auth);
@@ -684,6 +768,7 @@
                             email: user.email,
                             role: 'admin',
                             isBanned: false,
+                            deviceId: 'admin_device',
                             createdAt: serverTimestamp()
                         }, {merge: true});
                         
@@ -697,7 +782,9 @@
                 currentUserData = null;
                 document.getElementById('loginLink').style.display = 'flex';
                 document.getElementById('adminLink').style.display = 'none';
-                navigateTo('login-user');
+                if(document.getElementById('banAlertScreen').style.display !== 'flex') {
+                    navigateTo('login-user');
+                }
             }
         });
 
@@ -721,6 +808,7 @@
             }
         };
 
+        // --- إدارة المستخدمين (مع خيار حظر الجهاز) ---
         window.loadAllUsers = () => {
             const list = document.getElementById('allUsersList');
             const q = query(collection(db, "users"), where("role", "==", "user"));
@@ -731,17 +819,31 @@
                 snapshot.forEach(docSnap => {
                     const u = docSnap.data();
                     const isBanned = u.isBanned;
+                    const deviceId = u.deviceId || 'unknown';
+                    
+                    // التحقق مما إذا كان الجهاز نفسه محظوراً في قائمة bannedDevices
+                    // (نحتاج لجلب هذه المعلومات، ولكن للأداء سنفترض وجودها إذا كان الزر يظهر حسب السياق، أو نتحقق لاحقاً)
+                    
                     html += `
                         <div class="user-item-row ${isBanned ? 'banned' : ''}">
                             <div class="user-info">
                                 <h4>${u.name} ${isBanned ? '(محظور)' : ''}</h4>
                                 <span>${u.email}</span>
+                                <span style="font-size:0.7rem; color:#666;">Device: ${deviceId.substring(0,8)}...</span>
                             </div>
-                            <button class="delete-btn" onclick="toggleBanUser('${docSnap.id}', ${isBanned})" title="${isBanned ? 'إلغاء الحظر' : 'حذف / حظر المستخدم'}">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    ${isBanned ? '<path d="M5 13l4 4L19 7"></path>' : '<polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>'}
-                                </svg>
-                            </button>
+                            <div class="user-actions">
+                                <button class="ban-device-btn" onclick="toggleDeviceBan('${deviceId}')" title="${'حظر/إلغاء حظر الجهاز'}">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                </button>
+                                <button class="delete-btn" onclick="toggleBanUser('${docSnap.id}', ${isBanned})" title="${isBanned ? 'إلغاء حظر الحساب' : 'حظر الحساب'}">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        ${isBanned ? '<path d="M5 13l4 4L19 7"></path>' : '<polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>'}
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     `;
                 });
@@ -751,10 +853,31 @@
 
         window.toggleBanUser = async (uid, currentStatus) => {
             const action = currentStatus ? 'إلغاء الحظر' : 'حظر';
-            if(!confirm(`هل أنت متأكد من ${action} هذا المستخدم؟`)) return;
+            if(!confirm(`هل أنت متأكد من ${action} حساب هذا المستخدم؟`)) return;
             try {
                 await updateDoc(doc(db, "users", uid), { isBanned: !currentStatus });
             } catch (e) { alert('فشل العملية: ' + e.message); }
+        };
+
+        // دالة حظر الجهاز (المنع الشامل)
+        window.toggleDeviceBan = async (deviceId) => {
+            const deviceRef = doc(db, "bannedDevices", deviceId);
+            const deviceSnap = await getDoc(deviceRef);
+            
+            if (deviceSnap.exists()) {
+                // إلغاء حظر الجهاز
+                if(!confirm('هل تريد إلغاء حظر هذا الجهاز؟ يمكن لمستخدم الجهاز إنشاء حسابات جديدة.')) return;
+                await deleteDoc(deviceRef);
+                alert('تم إلغاء حظر الجهاز.');
+            } else {
+                // حظر الجهاز
+                if(!confirm('تحذير: حظر الجهاز سيمنع أي شخص يستخدم هذا المتصفح من الدخول أو إنشاء حساب جديد. هل أنت متأكد؟')) return;
+                await setDoc(deviceRef, {
+                    bannedAt: serverTimestamp(),
+                    bannedBy: auth.currentUser.email
+                });
+                alert('تم حظر الجهاز بنجاح. لن يتمكن هذا المتصفح من الوصول للموقع.');
+            }
         };
 
         function checkNotificationStatus() {
