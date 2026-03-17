@@ -7,58 +7,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;500;700;900&family=Tajawal:wght@300;500;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- المتغيرات اللونية --- */
+        /* --- المتغيرات اللونية الإسلامية --- */
         :root {
-            --primary-hue: 45; 
-            --primary-saturation: 80%;
-            --primary-lightness: 50%;
+            --primary-hue: 45; /* ذهبي */
+            --primary-gold: #d4af37;
+            --primary-green: #0f3d24; /* أخضر إسلامي غامق */
+            --bg-dark: #02110a;
             
-            --primary-color: hsl(var(--primary-hue), var(--primary-saturation), var(--primary-lightness));
-            --primary-glow: hsla(var(--primary-hue), var(--primary-saturation), var(--primary-lightness), 0.5);
+            --primary-color: var(--primary-gold);
             --text-main: #ffffff;
-            --text-muted: #a0aec0;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: hsla(var(--primary-hue), var(--primary-saturation), 80%, 0.15);
-            --danger-color: #ff4d4d;
-            --msg-me-bg: var(--primary-color);
-            --msg-admin-bg: #2d3748;
+            --text-muted: #cbd5e0;
+            --glass-bg: rgba(15, 61, 36, 0.6);
+            --glass-border: rgba(212, 175, 55, 0.3);
+            --danger-color: #e53e3e;
+            
+            --msg-me-bg: #1a5c38;
+            --msg-admin-bg: #0d2919;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
 
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #020507;
+            /* خلفية إسلامية بدون نجوم */
+            background: radial-gradient(circle at top center, #0f3d24 0%, #02110a 100%);
             color: var(--text-main);
             overflow-x: hidden;
             min-height: 100vh;
             position: relative;
         }
 
-        /* --- الخلفية --- */
-        #space-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at bottom, #0b1021 0%, #000000 100%); }
-        .vignette { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%); z-index: -1; pointer-events: none; }
+        /* زخرفة ذهبية علوية */
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+            z-index: 1000;
+            box-shadow: 0 0 15px var(--primary-gold);
+        }
 
         /* --- الهيدر --- */
         .app-header {
             position: fixed; top: 0; left: 0; right: 0; height: 70px;
             display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
-            background: rgba(5, 5, 10, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border); z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            background: rgba(2, 17, 10, 0.95);
+            border-bottom: 1px solid var(--glass-border); z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
         }
 
         .icon-btn {
             width: 45px; height: 45px; border-radius: 12px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
             display: flex; justify-content: center; align-items: center;
-            color: white; text-decoration: none; cursor: pointer; transition: 0.3s; position: relative;
+            color: var(--primary-gold); text-decoration: none; cursor: pointer; transition: 0.3s; position: relative;
         }
-        .icon-btn:active { transform: scale(0.9); background: var(--primary-color); }
+        .icon-btn:active { transform: scale(0.9); background: var(--primary-gold); color: #000; }
         .menu-btn { order: 1; }
         .notification-link { order: 2; margin-left: 10px; }
         .chat-link { order: 3; }
 
-        /* نقطة الإشعارات والرسائل */
         .notification-dot { 
             position: absolute; top: 8px; left: 8px; width: 10px; height: 10px; 
             background-color: var(--danger-color); border-radius: 50%; 
@@ -71,128 +77,176 @@
         /* --- القائمة الجانبية --- */
         .side-drawer {
             position: fixed; top: 0; right: 0; width: 280px; height: 100%;
-            background: rgba(15, 20, 35, 0.95); backdrop-filter: blur(25px);
-            z-index: 200; transform: translateX(100%); transition: transform 0.4s;
-            border-left: 1px solid var(--glass-border); padding-top: 80px;
-            display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            background: rgba(2, 17, 10, 0.98);
+            z-index: 200; transform: translateX(100%); transition: transform 0.3s ease-out;
+            border-left: 1px solid var(--primary-gold); padding-top: 80px;
+            display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.8);
         }
         .side-drawer.open { transform: translateX(0); }
-        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 150; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 150; opacity: 0; visibility: hidden; transition: 0.3s; }
         .drawer-overlay.open { opacity: 1; visibility: visible; }
         .drawer-link {
             display: flex; align-items: center; padding: 18px 30px; color: var(--text-main);
             text-decoration: none; font-size: 1.1rem; font-family: 'Tajawal', sans-serif;
-            border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; cursor: pointer;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1); transition: 0.3s; cursor: pointer;
         }
-        .drawer-link:hover { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05)); color: var(--primary-color); padding-right: 35px; }
+        .drawer-link:hover { background: rgba(212, 175, 55, 0.1); color: var(--primary-gold); padding-right: 35px; }
         .drawer-link svg { width: 24px; height: 24px; margin-left: 15px; fill: currentColor; }
 
-        /* --- نظام الصفحات (Views) --- */
-        .view-section { display: none; padding-top: 80px; min-height: 100vh; animation: fadeIn 0.4s ease-out; padding-bottom: 50px; }
+        /* --- نظام الصفحات --- */
+        .view-section { display: none; padding-top: 80px; min-height: 100vh; animation: fadeIn 0.4s ease-out; padding-bottom: 80px; }
         .view-section.active-view { display: block; }
 
         /* --- الرئيسية --- */
         .hero-section { padding: 20px; text-align: center; position: relative; z-index: 2; }
         .logo-wrapper { position: relative; margin: 0 auto 1rem; width: 110px; height: 110px; }
-        .logo-glow { position: absolute; inset: 0; margin: auto; width: 180px; height: 180px; background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%); border-radius: 50%; z-index: 0; animation: pulseGlow 4s ease-in-out infinite; filter: blur(15px); }
-        .logo-img { width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--primary-color); object-fit: cover; position: relative; z-index: 2; box-shadow: 0 0 20px var(--primary-glow); }
-        h1.site-title { font-family: 'Tajawal', sans-serif; font-size: 1.6rem; font-weight: 800; background: linear-gradient(to bottom, #fff 20%, var(--primary-color)); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0; }
+        .logo-glow { position: absolute; inset: 0; margin: auto; width: 180px; height: 180px; background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 70%); border-radius: 50%; z-index: 0; animation: pulseGlow 4s ease-in-out infinite; }
+        .logo-img { width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--primary-gold); object-fit: cover; position: relative; z-index: 2; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+        h1.site-title { font-family: 'Tajawal', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--primary-gold); margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
         /* --- البحث --- */
         .search-container { padding: 10px 20px; position: relative; z-index: 5; }
-        .search-box { position: relative; width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; align-items: center; padding: 5px 15px; backdrop-filter: blur(10px); transition: 0.3s; }
-        .search-box:focus-within { border-color: var(--primary-color); box-shadow: 0 0 15px var(--primary-glow); }
+        .search-box { position: relative; width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border); border-radius: 30px; display: flex; align-items: center; padding: 5px 15px; transition: 0.3s; }
+        .search-box:focus-within { border-color: var(--primary-gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
         .search-box input { width: 100%; background: transparent; border: none; outline: none; color: white; padding: 12px; font-family: 'Cairo', sans-serif; }
-        .search-icon { color: var(--primary-color); margin-left: 10px; animation: floatIcon 3s ease-in-out infinite; }
+        .search-icon { color: var(--primary-gold); margin-left: 10px; }
 
         /* --- البطاقات --- */
         .carousel-container { width: 100%; display: flex; overflow-x: auto; padding: 20px; gap: 20px; scrollbar-width: none; }
-        .card { position: relative; flex: 0 0 auto; width: 260px; height: 340px; background: rgba(20, 25, 40, 0.6); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: white; transition: 0.3s; }
-        .card:hover { transform: translateY(-10px); border-color: var(--primary-color); box-shadow: 0 0 20px var(--primary-glow); }
-        .img-box { width: 100px; height: 100px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, transparent, var(--primary-color)); margin-bottom: 15px; }
-        .img-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #0f1423; }
+        .carousel-container::-webkit-scrollbar { display: none; }
+        .card { position: relative; flex: 0 0 auto; width: 260px; height: 340px; background: rgba(15, 30, 20, 0.9); border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; align-items: center; text-decoration: none; color: white; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary-gold); box-shadow: 0 0 25px rgba(212, 175, 55, 0.2); }
+        .img-box { width: 100px; height: 100px; border-radius: 50%; padding: 3px; background: linear-gradient(135deg, transparent, var(--primary-gold)); margin-bottom: 15px; }
+        .img-box img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #02110a; }
 
-        /* --- صفحة المحادثة (User) --- */
+        /* --- صفحة المحادثة --- */
         .chat-container { max-width: 600px; margin: 20px auto; display: flex; flex-direction: column; height: calc(100vh - 140px); }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .chat-header-utility { display: flex; justify-content: space-between; padding: 0 20px 10px; border-bottom: 1px solid rgba(212, 175, 55, 0.1); margin-bottom: 10px;}
+        .clear-chat-btn { background: transparent; color: var(--danger-color); border: 1px solid var(--danger-color); padding: 5px 15px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; }
         
-        .message-bubble { max-width: 80%; padding: 12px 16px; border-radius: 15px; line-height: 1.5; font-size: 0.95rem; position: relative; word-wrap: break-word; }
-        .msg-me { align-self: flex-end; background: var(--msg-me-bg); color: #000; border-bottom-left-radius: 2px; }
-        .msg-admin { align-self: flex-start; background: var(--msg-admin-bg); color: white; border-bottom-right-radius: 2px; border: 1px solid var(--glass-border); }
-        .msg-meta { font-size: 0.7rem; opacity: 0.7; margin-top: 5px; text-align: left; }
+        .chat-messages { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            /* إخفاء شريط التمرير */
+            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+        .chat-messages::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        
+        .message-bubble { max-width: 85%; padding: 12px 16px; border-radius: 18px; line-height: 1.5; font-size: 0.95rem; position: relative; word-wrap: break-word; border: 1px solid transparent; }
+        
+        .msg-me { 
+            align-self: flex-end; 
+            background: var(--msg-me-bg); 
+            color: #fff; 
+            border-bottom-left-radius: 4px; 
+            border-color: rgba(212, 175, 55, 0.2);
+        }
+        .msg-admin { 
+            align-self: flex-start; 
+            background: var(--msg-admin-bg); 
+            color: #e2e8f0; 
+            border-bottom-right-radius: 4px; 
+            border-color: rgba(255,255,255,0.05);
+        }
+        
+        .msg-meta { font-size: 0.7rem; opacity: 0.8; margin-top: 5px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px; color: #a0aec0; }
 
-        .chat-input-area { padding: 15px; background: rgba(10, 15, 25, 0.9); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px; }
+        /* زر الحذف دائما ظاهر باللون الأحمر */
+        .msg-delete-btn {
+            cursor: pointer; background: none; border: none; color: var(--danger-color); 
+            padding: 2px; display: flex; align-items: center; justify-content: center;
+            transform: scale(1.1);
+        }
+
+        .chat-input-area { padding: 15px; background: rgba(2, 17, 10, 0.95); border-top: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px; }
         .word-counter { font-size: 0.8rem; color: var(--text-muted); text-align: left; }
         .word-counter.limit-reached { color: var(--danger-color); }
-        .chat-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 10px; border-radius: 10px; outline: none; resize: none; font-family: 'Cairo'; min-height: 50px; }
-        .send-btn { background: var(--primary-color); color: #000; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; align-self: flex-end; width: 100px; transition: 0.3s; }
+        .chat-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 10px; border-radius: 15px; outline: none; resize: none; font-family: 'Cairo'; min-height: 50px; }
+        .send-btn { background: var(--primary-gold); color: #000; border: none; padding: 10px; border-radius: 15px; cursor: pointer; font-weight: bold; font-family: 'Cairo'; align-self: flex-end; width: 100px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .send-btn:disabled { background: #555; cursor: not-allowed; color: #888; }
 
-        /* --- صفحة الإشعارات (المستخدم) --- */
+        /* --- نافذة تأكيد الحذف --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000;
+            display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-box {
+            background: #0d2919; padding: 25px; border-radius: 20px; width: 90%; max-width: 320px; text-align: center;
+            border: 2px solid var(--primary-gold); box-shadow: 0 0 30px rgba(212, 175, 55, 0.2); transform: scale(0.9); transition: 0.3s;
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .btn-modal { padding: 12px; border-radius: 12px; border: none; cursor: pointer; font-family: 'Cairo'; font-weight: bold; transition: 0.2s; font-size: 1rem; }
+        .btn-del-me { background: transparent; color: #cbd5e0; border: 1px solid #4a5568; }
+        .btn-del-global { background: var(--danger-color); color: white; box-shadow: 0 4px 10px rgba(229, 62, 62, 0.4); }
+        .btn-cancel { background: transparent; color: var(--primary-gold); border: 1px solid var(--primary-gold); margin-top: 5px; }
+        .btn-modal:active { transform: scale(0.98); }
+
+        /* --- الإشعارات --- */
         .notifications-container { padding: 20px; max-width: 800px; margin: 0 auto; }
-        .notification-card { background: rgba(20, 25, 40, 0.7); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 15px; padding: 20px; margin-bottom: 15px; transition: 0.3s; position: relative; overflow: hidden; }
-        .notification-card::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 4px; background: var(--primary-color); }
+        .notification-card { background: rgba(13, 41, 25, 0.8); border: 1px solid var(--glass-border); border-radius: 15px; padding: 20px; margin-bottom: 15px; transition: 0.3s; position: relative; overflow: hidden; }
+        .notification-card::before { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 4px; background: var(--primary-gold); }
         .notif-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-left: 30px; }
-        .notif-title { font-weight: bold; font-size: 1.2rem; color: var(--primary-color); }
+        .notif-title { font-weight: bold; font-size: 1.2rem; color: var(--primary-gold); }
         .notif-date { font-size: 0.8rem; color: var(--text-muted); }
         .notif-body { line-height: 1.6; color: #ddd; white-space: pre-wrap; }
         .user-delete-btn { position: absolute; top: 15px; left: 15px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .user-delete-btn:hover { background: var(--danger-color); color: white; border-color: var(--danger-color); }
 
-        /* --- لوحة تحكم المدير --- */
+        /* --- لوحة المدير --- */
         .admin-dashboard { padding: 20px; max-width: 1200px; margin: 0 auto; }
-        
         .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
         .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 10px 20px; cursor: pointer; font-family: 'Cairo'; font-size: 1rem; border-radius: 10px; transition: 0.3s; }
-        .tab-btn.active { background: var(--primary-color); color: #000; font-weight: bold; }
-        
+        .tab-btn.active { background: var(--primary-gold); color: #000; font-weight: bold; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
 
         .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .dashboard-widget { background: rgba(15, 20, 35, 0.9); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .dashboard-widget { background: rgba(13, 41, 25, 0.95); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .dashboard-widget.full-width { grid-column: 1 / -1; }
 
-        /* --- New Admin Chat Styling --- */
         .admin-users-list-item {
             display: flex; align-items: center; gap: 15px;
             background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; margin-bottom: 10px;
             border: 1px solid transparent; transition: 0.3s; cursor: pointer;
         }
-        .admin-users-list-item:hover { background: rgba(255,255,255,0.06); border-color: var(--primary-color); }
+        .admin-users-list-item:hover { background: rgba(212, 175, 55, 0.05); border-color: var(--primary-gold); }
         
         .user-avatar { 
             width: 50px; height: 50px; border-radius: 50%; 
-            background: linear-gradient(135deg, var(--primary-color), #2d3748); 
+            background: linear-gradient(135deg, var(--primary-gold), #052e16); 
             display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.2rem; color: white;
-            flex-shrink: 0;
+            flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);
         }
         .user-info { flex: 1; overflow: hidden; }
-        .user-name { font-weight: bold; color: var(--primary-color); margin-bottom: 4px; }
+        .user-name { font-weight: bold; color: var(--primary-gold); margin-bottom: 4px; }
         .user-last-msg { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .user-time { font-size: 0.75rem; color: var(--text-muted); }
 
-        /* Chat Detail View in Admin */
         .admin-chat-detail-view { display: none; flex-direction: column; height: 600px; }
         .admin-chat-detail-view.active { display: flex; }
-        
-        .chat-header-admin { 
-            display: flex; align-items: center; gap: 10px; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); margin-bottom: 15px; 
-        }
+        .chat-header-admin { display: flex; align-items: center; gap: 10px; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); margin-bottom: 15px; }
         .back-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.5rem; }
-        .back-btn:hover { color: white; }
+        .back-btn:hover { color: var(--primary-gold); }
         
-        /* General UI */
-        .auth-container { max-width: 400px; margin: 40px auto; padding: 30px; background: rgba(15, 20, 35, 0.9); backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid var(--glass-border); text-align: center; }
+        .auth-container { max-width: 400px; margin: 40px auto; padding: 30px; background: rgba(13, 41, 25, 0.95); border-radius: 20px; border: 1px solid var(--glass-border); text-align: center; }
         .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: 10px; color: white; font-family: 'Cairo'; outline: none; }
-        .auth-input:focus { border-color: var(--primary-color); }
-        .btn-primary { width: 100%; padding: 15px; background: var(--primary-color); color: #000; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--primary-glow); }
+        .auth-input:focus { border-color: var(--primary-gold); }
+        .btn-primary { width: 100%; padding: 15px; background: var(--primary-gold); color: #000; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
         .error-msg { color: var(--danger-color); margin-bottom: 15px; font-size: 0.9rem; display: none; }
         
-        .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .widget-title { font-size: 1.2rem; color: var(--primary-color); font-weight: bold; }
-        .delete-btn { background: rgba(255, 77, 77, 0.1); border: none; color: var(--danger-color); width: 35px; height: 35px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        .widget-title { font-size: 1.2rem; color: var(--primary-gold); font-weight: bold; }
+        .delete-btn { background: rgba(229, 62, 62, 0.1); border: none; color: var(--danger-color); width: 35px; height: 35px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .delete-btn:hover { background: var(--danger-color); color: white; }
         .btn-logout { background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); padding: 8px 20px; border-radius: 20px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; }
         .btn-logout:hover { background: var(--danger-color); color: white; }
@@ -202,18 +256,17 @@
             background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; margin-bottom: 10px;
             border-right: 3px solid var(--glass-border); transition: 0.3s;
         }
-        .admin-notif-item:hover { background: rgba(255,255,255,0.06); border-right-color: var(--primary-color); }
+        .admin-notif-item:hover { background: rgba(255,255,255,0.06); border-right-color: var(--primary-gold); }
 
-        .theme-btn { position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px; border-radius: 50%; background: rgba(20, 20, 30, 0.8); border: 2px solid var(--primary-color); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px var(--primary-glow); }
+        .theme-btn { position: fixed; bottom: 25px; left: 25px; width: 50px; height: 50px; border-radius: 50%; background: rgba(20, 20, 30, 0.8); border: 2px solid var(--primary-gold); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
         .theme-btn:hover { transform: scale(1.1) rotate(90deg); }
         .palette-icon-svg { width: 28px; height: 28px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); }
-        .palette { position: fixed; bottom: 90px; left: 25px; background: rgba(15, 20, 35, 0.95); padding: 12px; border-radius: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px; opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 999; }
+        .palette { position: fixed; bottom: 90px; left: 25px; background: rgba(13, 41, 25, 0.95); padding: 12px; border-radius: 20px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; gap: 10px; opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 999; }
         .palette.active { opacity: 1; visibility: visible; transform: translateY(0); }
         .color-option { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
         .color-option.selected { border-color: white; transform: scale(1.1); }
 
-        @keyframes pulseGlow { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.15); } }
-        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        @keyframes pulseGlow { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.1); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (min-width: 769px) {
@@ -223,15 +276,25 @@
 </head>
 <body>
 
-    <canvas id="space-canvas"></canvas>
-    <div class="vignette"></div>
+    <!-- نافذة الحذف الموحدة -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <h3 style="color: var(--primary-gold); margin-bottom: 10px;">تأكيد الحذف</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">كيف تريد حذف هذه الرسالة؟</p>
+            <div class="modal-actions">
+                <button id="btnDeleteGlobal" class="btn-modal btn-del-global" onclick="confirmDelete('global')">حذف نهائي (من الطرفين)</button>
+                <button class="btn-modal btn-del-me" onclick="confirmDelete('me')">حذف من عندي فقط</button>
+                <button class="btn-modal btn-cancel" onclick="closeDeleteModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
 
     <!-- القائمة الجانبية -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <aside class="side-drawer" id="sideDrawer">
         <div style="text-align: center; margin-bottom: 30px;">
-            <img src="https://i.postimg.cc/bNqb3yWJ/5866036315810368735-121.jpg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary-color); margin-bottom: 10px;">
-            <h3 style="color: white;">القائمة</h3>
+            <img src="https://i.postimg.cc/bNqb3yWJ/5866036315810368735-121.jpg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary-gold); margin-bottom: 10px;">
+            <h3 style="color: var(--primary-gold);">القائمة</h3>
         </div>
         
         <div class="drawer-link" onclick="navigateTo('home'); closeMenu();">
@@ -261,7 +324,6 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </div>
         
-        <!-- أزرار الإشعارات والمراسلة -->
         <div style="display: flex; gap: 10px; order: 2;">
             <a class="icon-btn chat-link" onclick="navigateTo('chat')">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
@@ -294,7 +356,6 @@
         </div>
 
         <div class="carousel-container">
-            <!-- 13 بطاقة -->
             <a href="Maad.html" class="card teacher-card"><div class="card-content"><div class="img-box"><img src="https://i.postimg.cc/MKQdRKCP/5866036315810368746-121.jpg" alt="معاذ"></div><h3>المدرس معاذ المحمد</h3><span class="card-badge">مدرس قرآن</span></div></a>
             <a href="Awad.html" class="card teacher-card"><div class="card-content"><div class="img-box"><img src="https://i.postimg.cc/kXs9C3CT/5866036315810368745-121.jpg" alt="عوض"></div><h3>المدرس عوض فطراوي</h3><span class="card-badge">مدرس تجويد</span></div></a>
             <a href="Taha.html" class="card teacher-card"><div class="card-content"><div class="img-box"><img src="https://i.postimg.cc/rFVXQn49/5866036315810368748-121.jpg" alt="طه"></div><h3>المدرس طه المحمد</h3><span class="card-badge">حفص</span></div></a>
@@ -311,9 +372,13 @@
         </div>
     </main>
 
-    <!-- صفحة المحادثة (User) -->
+    <!-- صفحة المحادثة -->
     <div id="view-chat" class="view-section">
         <div class="chat-container">
+            <div class="chat-header-utility">
+                <span style="color:var(--primary-gold); font-size:0.9rem; font-weight:bold;">المحادثة مع الإدارة</span>
+                <button class="clear-chat-btn" onclick="clearAllUserMessages()">حذف الكل</button>
+            </div>
             <div class="chat-messages" id="chatMessagesList">
                 <div style="text-align:center; color: var(--text-muted); margin-top: 50px;">ابدأ المحادثة مع الإدارة...</div>
             </div>
@@ -330,7 +395,7 @@
     <!-- الإشعارات -->
     <div id="view-notifications" class="view-section">
         <div class="notifications-container" id="notificationsList">
-            <h2 style="text-align: center; margin-bottom: 20px; font-family: 'Tajawal';">التنبيهات والإعلانات</h2>
+            <h2 style="text-align: center; margin-bottom: 20px; font-family: 'Tajawal'; color: var(--primary-gold);">التنبيهات والإعلانات</h2>
             <div class="empty-notifications" style="text-align:center; color: var(--text-muted); margin-top:50px;">جاري التحميل...</div>
         </div>
     </div>
@@ -338,7 +403,7 @@
     <!-- تسجيل الدخول -->
     <div id="view-login" class="view-section">
         <div class="auth-container">
-            <h2 style="margin-bottom: 20px; color: var(--primary-color);">دخول المدير</h2>
+            <h2 style="margin-bottom: 20px; color: var(--primary-gold);">دخول المدير</h2>
             <div class="error-msg" id="loginError">فشل تسجيل الدخول</div>
             <form id="loginForm">
                 <input type="email" id="email" class="auth-input" placeholder="البريد الإلكتروني" required>
@@ -356,13 +421,11 @@
         </div>
 
         <div class="admin-dashboard">
-            <!-- Admin Tabs -->
             <div class="admin-tabs">
                 <button class="tab-btn active" onclick="switchAdminTab('notifications')">الإشعارات العامة</button>
                 <button class="tab-btn" onclick="switchAdminTab('messages')">الرسائل الواردة</button>
             </div>
 
-            <!-- Tab 1: Notifications -->
             <div id="tab-notifications" class="tab-content active">
                 <div class="admin-grid">
                     <div class="dashboard-widget">
@@ -375,7 +438,7 @@
                         <div class="widget-header"><span class="widget-title">إحصائيات</span></div>
                         <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom:10px;">
                             <span style="color: var(--text-muted);">إجمالي الإشعارات</span>
-                            <div style="color: var(--primary-color); font-weight: bold; font-size: 1.5rem;" id="totalNotifsCount">0</div>
+                            <div style="color: var(--primary-gold); font-weight: bold; font-size: 1.5rem;" id="totalNotifsCount">0</div>
                         </div>
                     </div>
                     <div class="dashboard-widget full-width">
@@ -385,10 +448,8 @@
                 </div>
             </div>
 
-            <!-- Tab 2: Messages (Admin Chat System) -->
             <div id="tab-messages" class="tab-content">
                 <div class="dashboard-widget full-width">
-                    <!-- Layer 1: List of Users -->
                     <div id="adminUsersListView">
                         <div class="widget-header">
                             <span class="widget-title">المحادثات الجماعية</span>
@@ -398,20 +459,17 @@
                         </div>
                     </div>
 
-                    <!-- Layer 2: Active Chat Detail (Hidden by default) -->
                     <div id="adminActiveChatView" class="admin-chat-detail-view">
                         <div class="chat-header-admin">
                             <button class="back-btn" onclick="closeAdminChat()">❯</button>
                             <div id="activeUserAvatar" class="user-avatar" style="width:40px; height:40px; font-size:1rem;"></div>
                             <div>
-                                <div id="activeUserName" style="font-weight:bold; color:var(--primary-color)">اسم المستخدم</div>
+                                <div id="activeUserName" style="font-weight:bold; color:var(--primary-gold)">اسم المستخدم</div>
                                 <div style="font-size:0.8rem; color:var(--text-muted)">مستخدم</div>
                             </div>
                         </div>
 
-                        <div id="adminChatMessages" class="chat-messages">
-                            <!-- Messages will be injected here -->
-                        </div>
+                        <div id="adminChatMessages" class="chat-messages"></div>
 
                         <div class="chat-input-area">
                             <input type="text" id="adminReplyInput" class="chat-input" placeholder="اكتب ردك...">
@@ -424,7 +482,7 @@
     </div>
 
     <div class="theme-btn" id="themeToggle">
-        <svg class="palette-icon-svg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="palette-icon-svg" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
             <circle cx="12" cy="10" r="3" fill="#ff4d4d" stroke="none"></circle>
             <circle cx="16" cy="14" r="1.5" fill="#00d4ff" stroke="none"></circle>
@@ -442,7 +500,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, updateDoc, where, arrayUnion } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, updateDoc, where, arrayUnion, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAoSNWj0JngNtTg2Ta56IQJxmVSwR_LEWs",
@@ -458,17 +516,21 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- User Identity (Anonymous ID) ---
+        // --- User Identity ---
         let userId = localStorage.getItem('userDeviceId');
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('userDeviceId', userId);
         }
 
-        // --- State for Admin Chat ---
         let activeAdminChatUserId = null;
-        let activeAdminChatMessageId = null; // To know which doc to update
-        let adminMessagesUnsubscribe = null; // To stop listening when leaving chat
+        let activeAdminChatMessageId = null;
+        let adminMessagesUnsubscribe = null;
+        
+        // --- Delete Modal State ---
+        let selectedMessageForDelete = null;
+        let isMyMessage = false; 
+        let currentUserRole = 'user';
 
         // --- Navigation ---
         window.navigateTo = (viewId) => {
@@ -479,8 +541,8 @@
             if (viewId === 'notifications') {
                 loadNotifications(); markNotificationsAsRead();
             }
-            if (viewId === 'chat') loadUserChat();
-            if (viewId === 'admin') loadAdminNotifications();
+            if (viewId === 'chat') { currentUserRole = 'user'; loadUserChat(); }
+            if (viewId === 'admin') { currentUserRole = 'admin'; loadAdminNotifications(); }
         };
 
         window.handleAdminClick = () => auth.currentUser ? window.navigateTo('admin') : window.navigateTo('login');
@@ -490,14 +552,13 @@
         window.switchAdminTab = (tabName) => {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
             document.getElementById(`tab-${tabName}`).classList.add('active');
             const btns = document.querySelectorAll('.tab-btn');
             if(tabName === 'notifications') { btns[0].classList.add('active'); loadAdminNotifications(); }
             else { 
                 btns[1].classList.add('active'); 
-                loadAdminUsersList(); // Load list of users
-                closeAdminChat(); // Ensure detail view is hidden
+                loadAdminUsersList();
+                closeAdminChat();
             }
         };
 
@@ -519,7 +580,7 @@
             if (!user && document.getElementById('view-admin').classList.contains('active-view')) window.navigateTo('home');
         });
 
-        // --- Notification Logic (Broadcast) ---
+        // --- Notification Logic ---
         function checkNotificationStatus() {
             const lastSeenId = localStorage.getItem('lastSeenNotifId');
             const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"));
@@ -544,13 +605,12 @@
 
         window.loadNotifications = () => {
             const list = document.getElementById('notificationsList');
-            list.innerHTML = '<h2 style="text-align: center; margin-bottom: 20px; font-family: \'Tajawal\';">التنبيهات والإعلانات</h2>';
+            list.innerHTML = '<h2 style="text-align: center; margin-bottom: 20px; font-family: \'Tajawal\'; color: var(--primary-gold);">التنبيهات والإعلانات</h2>';
             const hiddenIds = JSON.parse(localStorage.getItem('userDeletedNotifIds') || '[]');
             const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
-                list.innerHTML = '<h2 style="text-align: center; margin-bottom: 20px; font-family: \'Tajawal\';">التنبيهات والإعلانات</h2>';
+                list.innerHTML = '<h2 style="text-align: center; margin-bottom: 20px; font-family: \'Tajawal\'; color: var(--primary-gold);">التنبيهات والإعلانات</h2>';
                 if (snapshot.empty) { list.innerHTML += '<div class="empty-notifications">لا توجد إشعارات</div>'; return; }
-                
                 let hasVisible = false;
                 snapshot.forEach((doc) => {
                     if (hiddenIds.includes(doc.id)) return;
@@ -607,7 +667,7 @@
                     item.className = 'admin-notif-item';
                     item.innerHTML = `
                         <div style="flex:1; margin-left:15px;">
-                            <div style="font-weight:bold; color:var(--primary-color)">${data.title}</div>
+                            <div style="font-weight:bold; color:var(--primary-gold)">${data.title}</div>
                             <div style="font-size:0.85rem; color:var(--text-muted)">${data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString('ar-EG') : ''}</div>
                         </div>
                         <button class="delete-btn" onclick="deleteNotification('${doc.id}')">
@@ -626,7 +686,6 @@
         chatInput.addEventListener('input', () => {
             const words = chatInput.value.trim().split(/\s+/).filter(w => w.length > 0).length;
             wordCounter.textContent = `${words}/20 كلمة`;
-            
             if (words > 20) {
                 wordCounter.classList.add('limit-reached');
                 sendBtn.disabled = true;
@@ -642,235 +701,284 @@
         window.sendChatMessage = async () => {
             const text = chatInput.value.trim();
             const words = text.split(/\s+/).filter(w => w.length > 0).length;
-            
             if (words > 20) return alert('عذراً، لا يمكن تجاوز 20 كلمة');
             if (!text) return;
-
             try {
                 await addDoc(collection(db, "chats"), {
                     userId: userId,
                     message: text,
                     timestamp: serverTimestamp(),
-                    replies: [] 
+                    replies: [],
+                    hiddenFor: [],
+                    isDeletedGlobal: false
                 });
                 chatInput.value = '';
                 wordCounter.textContent = '0/20 كلمة';
                 sendBtn.disabled = true;
-            } catch (e) {
-                console.error(e);
-                alert('فشل الإرسال');
-            }
+            } catch (e) { console.error(e); alert('فشل الإرسال'); }
         };
+
+        window.clearAllUserMessages = async () => {
+            if(!confirm('هل أنت متأكد من حذف جميع المحادثات؟')) return;
+            try {
+                const q = query(collection(db, "chats"), where("userId", "==", userId));
+                const snapshot = await getDocs(q);
+                const batch = writeBatch(db);
+                snapshot.forEach((doc) => {
+                    batch.update(doc.ref, { hiddenFor: arrayUnion(userId) });
+                });
+                await batch.commit();
+            } catch (e) { console.error(e); alert('حدث خطأ أثناء الحذف'); }
+        };
+
+        // === دالة المساعدة للتحقق من الردود المخفية ===
+        function isReplyHidden(replyId) {
+            const hiddenReplies = JSON.parse(localStorage.getItem('hiddenReplies') || '[]');
+            return hiddenReplies.includes(replyId);
+        }
 
         window.loadUserChat = () => {
             const list = document.getElementById('chatMessagesList');
             const q = query(collection(db, "chats"), where("userId", "==", userId));
             
             onSnapshot(q, (snapshot) => {
-                list.innerHTML = '';
-                
-                // Convert to array
+                const fragment = document.createDocumentFragment();
+                let hasMessages = false;
                 let chatsArray = [];
-                snapshot.forEach(doc => {
-                    chatsArray.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Sort ASCENDING (Oldest -> Newest)
-                chatsArray.sort((a, b) => {
-                    const timeA = a.timestamp ? a.timestamp.seconds : 0;
-                    const timeB = b.timestamp ? b.timestamp.seconds : 0;
-                    return timeA - timeB;
-                });
+                snapshot.forEach(doc => { chatsArray.push({ id: doc.id, ...doc.data() }); });
+                chatsArray.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
                 
                 if (chatsArray.length === 0) {
-                    list.innerHTML = '<div style="text-align:center; color: var(--text-muted); margin-top: 50px;">ابدأ المحادثة مع الإدارة...</div>';
+                    if(!hasMessages) list.innerHTML = '<div style="text-align:center; color: var(--text-muted); margin-top: 50px;">ابدأ المحادثة مع الإدارة...</div>';
                     return;
                 }
                 
                 chatsArray.forEach((data) => {
-                    // User Message
+                    if (data.isDeletedGlobal) return;
+                    if (data.hiddenFor && data.hiddenFor.includes(userId)) return;
+                    hasMessages = true;
+                    
+                    // User Message (My Message)
                     const userBubble = document.createElement('div');
                     userBubble.className = 'message-bubble msg-me';
-                    userBubble.innerHTML = `${data.message} <div class="msg-meta">${data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : ''}</div>`;
-                    list.appendChild(userBubble);
+                    userBubble.innerHTML = `
+                        ${data.message} 
+                        <div class="msg-meta">
+                            <span>${data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : ''}</span>
+                            <button class="msg-delete-btn" onclick="requestDelete('${data.id}', true)" title="حذف">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>`;
+                    fragment.appendChild(userBubble);
 
                     // Admin Replies
                     if (data.replies && data.replies.length > 0) {
-                        data.replies.forEach(reply => {
+                        data.replies.forEach((reply, index) => {
+                            const replyId = `${data.id}_rep_${index}`;
+                            if(isReplyHidden(replyId)) return; 
+                            
                             const adminBubble = document.createElement('div');
                             adminBubble.className = 'message-bubble msg-admin';
-                            adminBubble.innerHTML = `${reply.text} <div class="msg-meta">الإدارة • ${reply.timestamp ? new Date(reply.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : ''}</div>`;
-                            list.appendChild(adminBubble);
+                            adminBubble.innerHTML = `
+                                ${reply.text} 
+                                <div class="msg-meta">
+                                    <span>الإدارة • ${reply.timestamp ? new Date(reply.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : ''}</span>
+                                    <button class="msg-delete-btn" onclick="requestDelete('${replyId}', false)" title="حذف">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    </button>
+                                </div>`;
+                            fragment.appendChild(adminBubble);
                         });
                     }
                 });
-                
-                // Auto scroll to bottom
+
+                list.innerHTML = '';
+                if(!hasMessages) list.innerHTML = '<div style="text-align:center; color: var(--text-muted); margin-top: 50px;">لا توجد رسائل</div>';
+                else list.appendChild(fragment);
                 list.scrollTop = list.scrollHeight;
             });
         };
 
-        // --- Admin Logic: List of Users ---
+        // --- Admin Logic ---
         window.loadAdminUsersList = () => {
             const list = document.getElementById('adminUsersList');
             const q = query(collection(db, "chats"));
-            
             onSnapshot(q, (snapshot) => {
-                list.innerHTML = '';
-                
-                // Group messages by user ID
+                let html = '';
                 const usersMap = new Map();
-                
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const uid = data.userId;
-                    
-                    // If user not in map or this message is newer than the stored one
                     if (!usersMap.has(uid) || (data.timestamp && data.timestamp.seconds > usersMap.get(uid).lastTime)) {
                         usersMap.set(uid, {
                             lastMessage: data.message,
-                            lastTime: data.timestamp ? data.timestamp.seconds : 0,
-                            docId: doc.id // ID of the last message
+                            lastTime: data.timestamp ? data.timestamp.seconds : 0
                         });
                     }
                 });
-
-                // Convert map to array and sort by last time (newest users first)
                 const usersArray = Array.from(usersMap.entries()).sort((a, b) => b[1].lastTime - a[1].lastTime);
-
-                if(usersArray.length === 0) list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">لا توجد رسائل بعد</p>';
-
+                if(usersArray.length === 0) html = '<p style="color:var(--text-muted); text-align:center;">لا توجد رسائل بعد</p>';
                 usersArray.forEach(([uid, info]) => {
-                    const item = document.createElement('div');
-                    item.className = 'admin-users-list-item';
-                    
-                    // Get first letter of ID for avatar
                     const letter = uid.charAt(0).toUpperCase();
-                    
-                    item.innerHTML = `
-                        <div class="user-avatar">${letter}</div>
-                        <div class="user-info">
-                            <div class="user-name">${uid}</div>
-                            <div class="user-last-msg">${info.lastMessage}</div>
+                    html += `
+                        <div class="admin-users-list-item" onclick="openAdminChat('${uid}', '${letter}')">
+                            <div class="user-avatar">${letter}</div>
+                            <div class="user-info">
+                                <div class="user-name">${uid}</div>
+                                <div class="user-last-msg">${info.lastMessage}</div>
+                            </div>
+                            <div class="user-time">${new Date(info.lastTime * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</div>
                         </div>
-                        <div class="user-time">${new Date(info.lastTime * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</div>
                     `;
-                    
-                    // On Click -> Open Chat
-                    item.onclick = () => openAdminChat(uid, letter);
-                    list.appendChild(item);
                 });
+                list.innerHTML = html;
             });
         };
 
-        // --- Admin Logic: Open Specific Chat ---
+        // --- إصلاح هام: تعريف window.requestDelete ---
+        window.requestDelete = (msgId, isMine) => {
+            selectedMessageForDelete = msgId;
+            isMyMessage = isMine;
+            
+            if(isMine) {
+                // إذا كانت رسالتي -> اظهر النافذة
+                const modal = document.getElementById('deleteModal');
+                const btnGlobal = document.getElementById('btnDeleteGlobal');
+                // فقط الرسائل الرئيسية (التي ليست ردود) يمكن حذفها عالمياً في هذا الهيكل
+                // إذا كان الرد، نخفي زر الحذف العالمي
+                if (msgId.includes('_rep_')) {
+                    btnGlobal.style.display = 'none';
+                } else {
+                    btnGlobal.style.display = 'block';
+                }
+                modal.classList.add('active');
+            } else {
+                // إذا كانت رسالة الطرف الآخر -> احذف من عندي فوراً
+                confirmDelete('me');
+            }
+        };
+        
+        window.openDeleteModal = window.requestDelete; // ربط للتوافق
+
+        window.closeDeleteModal = () => {
+            document.getElementById('deleteModal').classList.remove('active');
+            selectedMessageForDelete = null;
+        };
+
+        window.confirmDelete = async (type) => {
+            if(!selectedMessageForDelete) return;
+            try {
+                const currentId = auth.currentUser ? auth.currentUser.uid : userId;
+                const isReply = selectedMessageForDelete.includes('_rep_');
+                
+                if (type === 'global') {
+                    // حذف عالمي للرسائل الرئيسية فقط
+                    if(!isReply) {
+                         await updateDoc(doc(db, "chats", selectedMessageForDelete), { isDeletedGlobal: true });
+                    }
+                } else {
+                    // حذف من عندي فقط
+                    if (isReply) {
+                        // استخدام LocalStorage لإخفاء الرد (لأنه لا يمكن تحديث عنصر مصفوفة بسهولة)
+                        let hiddenReplies = JSON.parse(localStorage.getItem('hiddenReplies') || '[]');
+                        if(!hiddenReplies.includes(selectedMessageForDelete)) {
+                            hiddenReplies.push(selectedMessageForDelete);
+                            localStorage.setItem('hiddenReplies', JSON.stringify(hiddenReplies));
+                        }
+                    } else {
+                        await updateDoc(doc(db, "chats", selectedMessageForDelete), { hiddenFor: arrayUnion(currentId) });
+                    }
+                }
+                closeDeleteModal();
+                if(currentUserRole === 'user') loadUserChat();
+                else if(activeAdminChatUserId) openAdminChat(activeAdminChatUserId, document.getElementById('activeUserAvatar').textContent);
+            } catch(e) { alert('فشل الحذف: ' + e.message); }
+        };
+
         window.openAdminChat = (uid, avatarLetter) => {
             activeAdminChatUserId = uid;
-            
-            // UI Switch
             document.getElementById('adminUsersListView').style.display = 'none';
             const chatView = document.getElementById('adminActiveChatView');
             chatView.classList.add('active');
-            
-            // Set Header Info
             document.getElementById('activeUserName').textContent = uid;
             document.getElementById('activeUserAvatar').textContent = avatarLetter;
             
-            // Load Messages
             const q = query(collection(db, "chats"), where("userId", "==", uid));
-            
-            // Unsubscribe previous listener if any
             if (adminMessagesUnsubscribe) adminMessagesUnsubscribe();
-            
+            const adminId = auth.currentUser ? auth.currentUser.uid : 'admin';
+
             adminMessagesUnsubscribe = onSnapshot(q, (snapshot) => {
                 const msgList = document.getElementById('adminChatMessages');
-                msgList.innerHTML = '';
-                
+                const fragment = document.createDocumentFragment();
                 let chatsArray = [];
                 snapshot.forEach(doc => chatsArray.push({ id: doc.id, ...doc.data() }));
-                
-                // Sort Ascending (Time flow)
-                chatsArray.sort((a, b) => {
-                    const tA = a.timestamp ? a.timestamp.seconds : 0;
-                    const tB = b.timestamp ? b.timestamp.seconds : 0;
-                    return tA - tB;
-                });
-
+                chatsArray.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
                 let lastMsgDocId = null;
 
                 chatsArray.forEach(data => {
-                    // Track last message ID to reply to
+                    if(data.hiddenFor && data.hiddenFor.includes(adminId)) return;
                     if(!lastMsgDocId) lastMsgDocId = data.id;
-                    else lastMsgDocId = data.id; // Update to the latest doc
+                    else lastMsgDocId = data.id;
 
-                    // User Bubble
+                    // User Message (Other)
                     const uBubble = document.createElement('div');
-                    uBubble.className = 'message-bubble msg-me'; // Style as user (right side usually, but for admin view, user is usually left, admin is right. Wait, CSS .msg-me is right aligned. Let's swap logically in Admin view)
-                    // In Admin View: User messages should be LEFT (Admin). Admin replies RIGHT.
-                    // Actually, standard chat: User (Left), Me (Right). 
-                    // Since .msg-me is styled right (User style), we can use it for the USER in Admin view as the "Remote" party?
-                    // Let's rename conceptually:
-                    // .msg-me is Right aligned. .msg-admin is Left aligned.
-                    // In Admin View: User messages should be LEFT (.msg-admin style). Admin replies RIGHT (.msg-me style).
-                    
                     uBubble.className = 'message-bubble msg-admin'; 
-                    uBubble.innerHTML = `${data.message} <div class="msg-meta">${data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : ''}</div>`;
-                    msgList.appendChild(uBubble);
+                    uBubble.innerHTML = `
+                        ${data.message} 
+                        <div class="msg-meta">
+                            <span>${data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : ''}</span>
+                            <button class="msg-delete-btn" onclick="requestDelete('${data.id}', false)" title="حذف">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                        </div>`;
+                    fragment.appendChild(uBubble);
 
-                    // Replies (Me)
                     if(data.replies && data.replies.length > 0) {
-                        data.replies.forEach(rep => {
+                        data.replies.forEach((rep, index) => {
+                            const replyId = `${data.id}_rep_${index}`;
+                            if(isReplyHidden(replyId)) return;
+
                             const rBubble = document.createElement('div');
                             rBubble.className = 'message-bubble msg-me'; 
-                            rBubble.innerHTML = `${rep.text} <div class="msg-meta">${rep.timestamp ? new Date(rep.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : ''}</div>`;
-                            msgList.appendChild(rBubble);
+                            rBubble.innerHTML = `
+                                ${rep.text} 
+                                <div class="msg-meta">
+                                    <span>${rep.timestamp ? new Date(rep.timestamp.seconds * 1000).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) : ''}</span>
+                                    <button class="msg-delete-btn" onclick="requestDelete('${replyId}', true)" title="حذف">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                    </button>
+                                </div>`;
+                            fragment.appendChild(rBubble);
                         });
                     }
                 });
 
-                // Auto scroll
+                msgList.innerHTML = '';
+                msgList.appendChild(fragment);
                 msgList.scrollTop = msgList.scrollHeight;
-                
-                // Store the ID of the latest message document to reply to it
                 activeAdminChatMessageId = lastMsgDocId;
             });
         };
 
-        // --- Admin Logic: Close Chat & Back to List ---
         window.closeAdminChat = () => {
             activeAdminChatUserId = null;
             activeAdminChatMessageId = null;
-            if (adminMessagesUnsubscribe) {
-                adminMessagesUnsubscribe();
-                adminMessagesUnsubscribe = null;
-            }
-            
+            if (adminMessagesUnsubscribe) { adminMessagesUnsubscribe(); adminMessagesUnsubscribe = null; }
             document.getElementById('adminActiveChatView').classList.remove('active');
             document.getElementById('adminUsersListView').style.display = 'block';
         };
 
-        // --- Admin Logic: Send Reply ---
         window.sendAdminReply = async () => {
             const input = document.getElementById('adminReplyInput');
             const text = input.value.trim();
             if(!text || !activeAdminChatMessageId) return;
-
             try {
-                const replyData = {
-                    text: text,
-                    timestamp: new Date(), 
-                    sender: 'admin'
-                };
-
-                await updateDoc(doc(db, "chats", activeAdminChatMessageId), {
-                    replies: arrayUnion(replyData)
-                });
+                const replyData = { text: text, timestamp: new Date(), sender: 'admin' };
+                await updateDoc(doc(db, "chats", activeAdminChatMessageId), { replies: arrayUnion(replyData) });
                 input.value = '';
-                // No need to reload, onSnapshot handles it
             } catch (e) { alert("فشل الإرسال: " + e.message); }
         };
 
-        // Initialize checks
         checkNotificationStatus();
     </script>
 
@@ -907,17 +1015,6 @@
                 card.style.display = card.innerText.toLowerCase().includes(term) ? 'flex' : 'none';
             });
         });
-
-        const canvas = document.getElementById('space-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height, stars = [];
-        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resize);
-        resize();
-        class Star { constructor(){this.x=Math.random()*width;this.y=Math.random()*height;} update(){this.y+=0.5;if(this.y>height)this.y=0;} draw(){ctx.fillStyle='white';ctx.beginPath();ctx.arc(this.x,this.y,1,0,Math.PI*2);ctx.fill();}}
-        for(let j=0;j<100;j++) stars.push(new Star());
-        function animateSpace(){ctx.clearRect(0,0,width,height);stars.forEach(s=>{s.update();s.draw();});requestAnimationFrame(animateSpace);}
-        animateSpace();
     </script>
 </body>
 </html>
