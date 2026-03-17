@@ -280,7 +280,7 @@
             text-shadow: 0 5px 15px rgba(0,0,0,0.8);
         }
 
-        /* --- شريط البحث الجديد --- */
+        /* --- شريط البحث --- */
         .search-container {
             padding: 10px 20px;
             position: relative;
@@ -329,9 +329,9 @@
             animation: floatIcon 3s ease-in-out infinite;
         }
 
-        /* --- القائمة الأفقية (بدون 3D) --- */
+        /* --- القائمة الأفقية --- */
         .carousel-section {
-            padding: 10px 0 60px;
+            padding: 10px 0 80px; /* زيادة الحشو السفلي قليلاً لضمان وصول آخر بطاقة */
             position: relative;
             z-index: 2;
         }
@@ -343,7 +343,6 @@
             overflow-y: hidden;
             padding: 20px;
             gap: 20px;
-            /* إخفاء شريط التمرير للحفاظ على الجمالية */
             scrollbar-width: none; 
             -ms-overflow-style: none;
             scroll-behavior: smooth;
@@ -427,7 +426,6 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* رسالة عند عدم وجود نتائج */
         .no-results {
             text-align: center;
             width: 100%;
@@ -492,16 +490,6 @@
         
         .color-option.selected { border-color: white; transform: scale(1.1); box-shadow: 0 0 10px currentColor; }
 
-        footer {
-            text-align: center; padding: 20px 20px 80px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(10px);
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            position: relative; z-index: 2;
-        }
-
         /* Animations */
         @keyframes pulseGlow { 0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.15); } }
         @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
@@ -558,7 +546,6 @@
             </svg>
         </div>
         
-        <!-- رابط الإشعارات المحدث -->
         <a href="http://action_notifications" class="icon-btn notification-link">
             <div class="notification-dot"></div>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -691,10 +678,6 @@
         </div>
     </main>
 
-    <footer>
-        <p>جميع الحقوق محفوظة &copy; <span style="color: var(--primary-color);">معهد بدر السلام</span> 2026</p>
-    </footer>
-
     <!-- زر تغيير اللون -->
     <div class="theme-btn" id="themeToggle">
         <div class="theme-icon"></div>
@@ -787,7 +770,6 @@
             let hasResults = false;
 
             cards.forEach(card => {
-                // البحث في اسم المعلم والنص داخل البطاقة (الشارة)
                 const text = card.innerText.toLowerCase();
                 if (text.includes(term)) {
                     card.style.display = 'flex';
@@ -797,7 +779,6 @@
                 }
             });
 
-            // إظهار رسالة عدم وجود نتائج
             if (hasResults) {
                 noResultsMsg.style.display = 'none';
             } else {
