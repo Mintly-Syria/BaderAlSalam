@@ -27,7 +27,7 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            scroll-behavior: auto; /* تعطيل السكرول التلقائي للصفحة لتجنب التعارض مع JS */
+            scroll-behavior: smooth;
         }
 
         body {
@@ -63,7 +63,7 @@
             right: 0;
             height: 70px;
             display: flex;
-            justify-content: space-between; /* توزيع المسافات */
+            justify-content: space-between;
             align-items: center;
             padding: 0 20px;
             background: rgba(5, 5, 10, 0.7);
@@ -88,7 +88,7 @@
             cursor: pointer;
             transition: 0.3s;
             position: relative;
-            z-index: 101; /* فوق الخلفية */
+            z-index: 101;
         }
 
         .icon-btn:active {
@@ -96,34 +96,23 @@
             background: var(--primary-color);
         }
 
-        /* زر القائمة (يمين في RTL لأنه العنصر الأول في الفليكس) */
-        .menu-btn {
-            order: 1; /* ترتيب 1 */
-        }
-
-        /* زر الإشعارات (يسار في RTL لأنه العنصر الأخير في الفليكس) */
-        .notification-link {
-            order: 2; /* ترتيب 2 */
-        }
+        .menu-btn { order: 1; }
+        .notification-link { order: 2; }
 
         .notification-dot {
             position: absolute;
-            top: 8px;
-            left: 8px;
-            width: 8px;
-            height: 8px;
+            top: 8px; left: 8px;
+            width: 8px; height: 8px;
             background-color: #ff4d4d;
             border-radius: 50%;
             box-shadow: 0 0 5px #ff4d4d;
         }
 
-        /* --- القائمة الجانبية (Side Drawer) --- */
+        /* --- القائمة الجانبية --- */
         .side-drawer {
             position: fixed;
-            top: 0;
-            right: 0;
-            width: 280px;
-            height: 100%;
+            top: 0; right: 0;
+            width: 280px; height: 100%;
             background: rgba(15, 20, 35, 0.95);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
@@ -137,25 +126,19 @@
             box-shadow: -10px 0 30px rgba(0,0,0,0.5);
         }
 
-        .side-drawer.open {
-            transform: translateX(0);
-        }
+        .side-drawer.open { transform: translateX(0); }
 
         .drawer-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6);
             z-index: 150;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             transition: 0.3s;
             backdrop-filter: blur(2px);
         }
 
-        .drawer-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
+        .drawer-overlay.open { opacity: 1; visibility: visible; }
 
         .drawer-link {
             display: flex;
@@ -177,8 +160,7 @@
         }
 
         .drawer-link svg {
-            width: 24px;
-            height: 24px;
+            width: 24px; height: 24px;
             margin-left: 15px;
             fill: currentColor;
         }
@@ -189,8 +171,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8);
             z-index: 300;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -199,18 +180,14 @@
             backdrop-filter: blur(5px);
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
 
         .modal-box {
             background: rgba(20, 25, 40, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid var(--primary-color);
             border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
+            width: 100%; max-width: 400px;
             padding: 25px;
             text-align: center;
             transform: scale(0.8);
@@ -218,9 +195,7 @@
             box-shadow: 0 0 30px var(--primary-glow);
         }
 
-        .modal-overlay.active .modal-box {
-            transform: scale(1);
-        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
 
         .modal-title {
             color: var(--primary-color);
@@ -257,8 +232,8 @@
 
         /* --- منطقة الشعار والعنوان --- */
         .hero-section {
-            padding-top: 100px;
-            padding-bottom: 20px;
+            padding-top: 90px;
+            padding-bottom: 10px;
             text-align: center;
             position: relative;
             z-index: 2;
@@ -266,39 +241,36 @@
 
         .logo-wrapper {
             position: relative;
-            margin: 0 auto 1.5rem;
-            width: 130px;
-            height: 130px;
-            perspective: 1000px;
+            margin: 0 auto 1rem;
+            width: 110px;
+            height: 110px;
         }
 
         .logo-glow {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 220px; height: 220px;
+            width: 180px; height: 180px;
             background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
             border-radius: 50%;
             z-index: 0;
             animation: pulseGlow 4s ease-in-out infinite;
-            filter: blur(20px);
+            filter: blur(15px);
         }
 
         .logo-img {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             border-radius: 50%;
             border: 3px solid var(--primary-color);
             object-fit: cover;
             position: relative;
             z-index: 2;
-            box-shadow: 0 0 30px var(--primary-glow);
-            animation: floatLogo 6s ease-in-out infinite;
+            box-shadow: 0 0 20px var(--primary-glow);
         }
 
         h1.site-title {
             font-family: 'Tajawal', sans-serif;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
             background: linear-gradient(to bottom, #fff 20%, var(--primary-color));
             -webkit-background-clip: text;
@@ -308,36 +280,80 @@
             text-shadow: 0 5px 15px rgba(0,0,0,0.8);
         }
 
-        /* --- الكاروسيل الأفقي 3D المحسن --- */
+        /* --- شريط البحث الجديد --- */
+        .search-container {
+            padding: 10px 20px;
+            position: relative;
+            z-index: 5;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .search-box:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-box input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-icon {
+            color: var(--primary-color);
+            margin-left: 10px;
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        /* --- القائمة الأفقية (بدون 3D) --- */
         .carousel-section {
+            padding: 10px 0 60px;
             position: relative;
             z-index: 2;
-            padding: 10px 0 60px;
-            overflow: hidden;
         }
 
         .carousel-container {
             width: 100%;
-            height: 400px;
-            perspective: 1200px;
             display: flex;
-            align-items: center;
             overflow-x: auto;
             overflow-y: hidden;
-            scroll-snap-type: x mandatory;
-            padding: 0 50vw 0 20px;
-            scrollbar-width: none;
-        }
-
-        .carousel-container::-webkit-scrollbar { display: none; }
-
-        .carousel-track {
-            display: flex;
+            padding: 20px;
             gap: 20px;
-            padding-right: 50vw;
+            /* إخفاء شريط التمرير للحفاظ على الجمالية */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+            scroll-behavior: smooth;
         }
 
-        .card-3d {
+        .carousel-container::-webkit-scrollbar { 
+            display: none; 
+        }
+
+        .card {
             position: relative;
             flex: 0 0 auto;
             width: 260px;
@@ -353,16 +369,17 @@
             align-items: center;
             text-decoration: none;
             color: white;
-            scroll-snap-align: center;
-            /* تحسين الأداء */
-            will-change: transform, opacity; 
-            transform-style: preserve-3d;
+            transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transform-origin: center center;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 20px var(--primary-glow);
         }
 
         .card-content {
-            transform: translateZ(40px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -371,25 +388,28 @@
             width: 100%;
         }
 
-        .img-box-3d {
-            width: 100px;
-            height: 100px;
+        .img-box {
+            width: 100px; height: 100px;
             border-radius: 50%;
             padding: 3px;
             background: linear-gradient(135deg, transparent, var(--primary-color));
             margin-bottom: 15px;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transition: 0.3s;
         }
 
-        .img-box-3d img {
-            width: 100%;
-            height: 100%;
+        .card:hover .img-box {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .img-box img {
+            width: 100%; height: 100%;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #0f1423;
         }
 
-        .card-3d h3 {
+        .card h3 {
             font-size: 1.1rem;
             text-align: center;
             line-height: 1.4;
@@ -407,13 +427,20 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
+        /* رسالة عند عدم وجود نتائج */
+        .no-results {
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            color: var(--text-muted);
+            display: none;
+        }
+
         /* --- زر تغيير الألوان --- */
         .theme-btn {
             position: fixed;
-            bottom: 25px;
-            left: 25px;
-            width: 50px;
-            height: 50px;
+            bottom: 25px; left: 25px;
+            width: 50px; height: 50px;
             border-radius: 50%;
             background: rgba(20, 20, 30, 0.8);
             backdrop-filter: blur(10px);
@@ -437,8 +464,7 @@
 
         .palette {
             position: fixed;
-            bottom: 90px;
-            left: 25px;
+            bottom: 90px; left: 25px;
             background: rgba(15, 20, 35, 0.95);
             backdrop-filter: blur(20px);
             padding: 12px;
@@ -447,8 +473,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             transform: translateY(20px);
             transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 999;
@@ -468,7 +493,7 @@
         .color-option.selected { border-color: white; transform: scale(1.1); box-shadow: 0 0 10px currentColor; }
 
         footer {
-            text-align: center; padding: 30px 20px 100px;
+            text-align: center; padding: 20px 20px 80px;
             border-top: 1px solid rgba(255,255,255,0.05);
             background: rgba(0,0,0,0.4);
             backdrop-filter: blur(10px);
@@ -479,16 +504,15 @@
 
         /* Animations */
         @keyframes pulseGlow { 0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.15); } }
-        @keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 
         @media (min-width: 769px) {
             .app-header { padding: 0 40px; }
-            .logo-wrapper { width: 160px; height: 160px; }
-            .logo-glow { width: 280px; height: 280px; }
-            h1.site-title { font-size: 3rem; }
-            .card-3d { width: 300px; height: 380px; }
-            .img-box-3d { width: 120px; height: 120px; }
-            .carousel-container { height: 450px; }
+            .logo-wrapper { width: 140px; height: 140px; }
+            .logo-glow { width: 220px; height: 220px; }
+            h1.site-title { font-size: 2.5rem; }
+            .card { width: 300px; height: 380px; }
+            .img-box { width: 120px; height: 120px; }
         }
     </style>
 </head>
@@ -514,13 +538,11 @@
             <img src="https://i.postimg.cc/bNqb3yWJ/5866036315810368735-121.jpg" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary-color); margin-bottom: 10px;">
             <h3 style="color: white;">القائمة</h3>
         </div>
-        <!-- عنصر القائمة 1 -->
-        <div class="drawer-link" onclick="openModal('حول المعهد القرآني', 'معهد بدر السلام هو مؤسسة تعليمية إسلامية رائدة، تهدف إلى نشر علوم القرآن الكريم وتجويده وتحفيظه، وتخريج جيل قرآني متمسك بتعاليم دينه، من خلال نخبة من المشايخ المتقنين.')">
+        <div class="drawer-link" onclick="openModal('حول المعهد القرآني', 'معهد بدر السلام هو مؤسسة تعليمية إسلامية رائدة، تهدف إلى نشر علوم القرآن الكريم وتجويده وتحفيظه.')">
             <svg viewBox="0 0 24 24"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8 8 8z"/></svg>
             حول المعهد القرآني
         </div>
-        <!-- عنصر القائمة 2 -->
-        <div class="drawer-link" onclick="openModal('سياسة الخصوصية', 'نحن في معهد بدر السلام نلتزم بحماية خصوصية بياناتك. أي معلومات شخصية تقدمها لنا ستُستخدم لغرض تحسين تجربتك التعليمية فقط، ولن يتم مشاركتها مع أي طرف ثالث دون موافقتك الصريحة.')">
+        <div class="drawer-link" onclick="openModal('سياسة الخصوصية', 'نحن في معهد بدر السلام نلتزم بحماية خصوصية بياناتك. أي معلومات شخصية تقدمها لنا ستُستخدم لغرض تحسين تجربتك التعليمية فقط.')">
             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
             سياسة الخصوصية
         </div>
@@ -528,7 +550,6 @@
 
     <!-- الهيدر -->
     <header class="app-header">
-        <!-- زر القائمة (يمين) - عنصر أول -->
         <div class="icon-btn menu-btn" onclick="toggleMenu()">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -536,8 +557,8 @@
                 <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
         </div>
-
-        <!-- زر الإشعارات (يسار) - عنصر آخر -->
+        
+        <!-- رابط الإشعارات المحدث -->
         <a href="http://action_notifications" class="icon-btn notification-link">
             <div class="notification-dot"></div>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -552,108 +573,121 @@
             <div class="logo-glow"></div>
             <img src="https://i.postimg.cc/bNqb3yWJ/5866036315810368735-121.jpg" alt="شعار المعهد" class="logo-img">
         </div>
-        
         <h1 class="site-title" id="typewriter"></h1>
     </div>
 
-    <main class="carousel-section">
-        <!-- تم حذف عنوان هيئة التدريس -->
-        
-        <div class="carousel-container" id="carousel">
-            <div class="carousel-track">
-                <!-- المدرسين -->
-                <a href="Maad.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/MKQdRKCP/5866036315810368746-121.jpg" alt="معاذ"></div>
-                        <h3>المدرس معاذ المحمد</h3>
-                        <span class="card-badge">مدرس قرآن</span>
-                    </div>
-                </a>
-                <a href="Awad.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/kXs9C3CT/5866036315810368745-121.jpg" alt="عوض"></div>
-                        <h3>المدرس عوض فطراوي</h3>
-                        <span class="card-badge">مدرس تجويد</span>
-                    </div>
-                </a>
-                <a href="Taha.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/rFVXQn49/5866036315810368748-121.jpg" alt="طه"></div>
-                        <h3>المدرس طه المحمد</h3>
-                        <span class="card-badge">حفص</span>
-                    </div>
-                </a>
-                <a href="Modar.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/50BTmL2c/5866036315810368747-121.jpg" alt="مضر"></div>
-                        <h3>المدرس مضر الشعار</h3>
-                        <span class="card-badge">قراءات</span>
-                    </div>
-                </a>
-                <a href="Tarage.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/KvHqBJDP/5866036315810368737-121.jpg" alt="تراجي"></div>
-                        <h3>المدرسة تراجي المصطفى</h3>
-                        <span class="card-badge">تحفيظ</span>
-                    </div>
-                </a>
-                <a href="Tahane.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/9QNDWq2n/5866036315810368736-121.jpg" alt="تهاني"></div>
-                        <h3>المدرسة تهاني</h3>
-                        <span class="card-badge">تجويد</span>
-                    </div>
-                </a>
-                <a href="Marwa.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/6Q5fPZcT/5866036315810368740-121.jpg" alt="مروة"></div>
-                        <h3>المدرسة مروة المصطفى</h3>
-                        <span class="card-badge">قسم النساء</span>
-                    </div>
-                </a>
-                <a href="Rawda.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/8c8WTfRC/5866036315810368744-121.jpg" alt="روضة"></div>
-                        <h3>المدرسة روضة المصطفى</h3>
-                        <span class="card-badge">حفظ</span>
-                    </div>
-                </a>
-                <a href="FatemaF.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/fy2NxmBp/5866036315810368742-121.jpg" alt="فاطمة"></div>
-                        <h3>المدرسة فاطمة فطراوي</h3>
-                        <span class="card-badge">أحكام</span>
-                    </div>
-                </a>
-                <a href="FatemaM.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/NjRntRR6/5866036315810368739-121.jpg" alt="فاطمة"></div>
-                        <h3>المدرسة فاطمة المحمود</h3>
-                        <span class="card-badge">ترتيل</span>
-                    </div>
-                </a>
-                <a href="Aia.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/6q3s5TBK/5866036315810368743-121.jpg" alt="اية"></div>
-                        <h3>المدرسة اية الايوب</h3>
-                        <span class="card-badge">قراءة</span>
-                    </div>
-                </a>
-                <a href="Marwazainab.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/Dzy6JJTH/5866036315810368738-121.jpg" alt="مروة"></div>
-                        <h3>المدرسة مروة المصطفى</h3>
-                        <span class="card-badge">مراجعة</span>
-                    </div>
-                </a>
-                <a href="Aliaa.html" class="card-3d">
-                    <div class="card-content">
-                        <div class="img-box-3d"><img src="https://i.postimg.cc/cCsx7sZF/5866036315810368741-121.jpg" alt="علياء"></div>
-                        <h3>المدرسة علياء عبدالقادر</h3>
-                        <span class="card-badge">تسميع</span>
-                    </div>
-                </a>
+    <!-- شريط البحث -->
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="ابحث عن حلقة باسم المعلم...">
+            <div class="search-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
             </div>
+        </div>
+    </div>
+
+    <main class="carousel-section">
+        <div class="carousel-container" id="cardContainer">
+            <!-- رسالة لا توجد نتائج -->
+            <div class="no-results" id="noResults">
+                <p>لا توجد نتائج مطابقة للبحث</p>
+            </div>
+
+            <!-- المدرسين -->
+            <a href="Maad.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/MKQdRKCP/5866036315810368746-121.jpg" alt="معاذ"></div>
+                    <h3>المدرس معاذ المحمد</h3>
+                    <span class="card-badge">مدرس قرآن</span>
+                </div>
+            </a>
+            <a href="Awad.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/kXs9C3CT/5866036315810368745-121.jpg" alt="عوض"></div>
+                    <h3>المدرس عوض فطراوي</h3>
+                    <span class="card-badge">مدرس تجويد</span>
+                </div>
+            </a>
+            <a href="Taha.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/rFVXQn49/5866036315810368748-121.jpg" alt="طه"></div>
+                    <h3>المدرس طه المحمد</h3>
+                    <span class="card-badge">حفص</span>
+                </div>
+            </a>
+            <a href="Modar.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/50BTmL2c/5866036315810368747-121.jpg" alt="مضر"></div>
+                    <h3>المدرس مضر الشعار</h3>
+                    <span class="card-badge">قراءات</span>
+                </div>
+            </a>
+            <a href="Tarage.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/KvHqBJDP/5866036315810368737-121.jpg" alt="تراجي"></div>
+                    <h3>المدرسة تراجي المصطفى</h3>
+                    <span class="card-badge">تحفيظ</span>
+                </div>
+            </a>
+            <a href="Tahane.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/9QNDWq2n/5866036315810368736-121.jpg" alt="تهاني"></div>
+                    <h3>المدرسة تهاني</h3>
+                    <span class="card-badge">تجويد</span>
+                </div>
+            </a>
+            <a href="Marwa.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/6Q5fPZcT/5866036315810368740-121.jpg" alt="مروة"></div>
+                    <h3>المدرسة مروة المصطفى</h3>
+                    <span class="card-badge">قسم النساء</span>
+                </div>
+            </a>
+            <a href="Rawda.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/8c8WTfRC/5866036315810368744-121.jpg" alt="روضة"></div>
+                    <h3>المدرسة روضة المصطفى</h3>
+                    <span class="card-badge">حفظ</span>
+                </div>
+            </a>
+            <a href="FatemaF.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/fy2NxmBp/5866036315810368742-121.jpg" alt="فاطمة"></div>
+                    <h3>المدرسة فاطمة فطراوي</h3>
+                    <span class="card-badge">أحكام</span>
+                </div>
+            </a>
+            <a href="FatemaM.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/NjRntRR6/5866036315810368739-121.jpg" alt="فاطمة"></div>
+                    <h3>المدرسة فاطمة المحمود</h3>
+                    <span class="card-badge">ترتيل</span>
+                </div>
+            </a>
+            <a href="Aia.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/6q3s5TBK/5866036315810368743-121.jpg" alt="اية"></div>
+                    <h3>المدرسة اية الايوب</h3>
+                    <span class="card-badge">قراءة</span>
+                </div>
+            </a>
+            <a href="Marwazainab.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/Dzy6JJTH/5866036315810368738-121.jpg" alt="مروة"></div>
+                    <h3>المدرسة مروة المصطفى</h3>
+                    <span class="card-badge">مراجعة</span>
+                </div>
+            </a>
+            <a href="Aliaa.html" class="card teacher-card">
+                <div class="card-content">
+                    <div class="img-box"><img src="https://i.postimg.cc/cCsx7sZF/5866036315810368741-121.jpg" alt="علياء"></div>
+                    <h3>المدرسة علياء عبدالقادر</h3>
+                    <span class="card-badge">تسميع</span>
+                </div>
+            </a>
         </div>
     </main>
 
@@ -732,7 +766,7 @@
             modalTitle.textContent = title;
             modalContent.textContent = text;
             modalOverlay.classList.add('active');
-            closeMenu(); // إغلاق القائمة تلقائياً
+            closeMenu();
         }
 
         function closeModal() {
@@ -743,45 +777,33 @@
             if(e.target === modalOverlay) closeModal();
         });
 
-        // --- 5. كاروسيل 3D أفقي (Fixed & Smooth) ---
-        // استخدام requestAnimationFrame لضمان عدم الاهتزاز
-        const carousel = document.getElementById('carousel');
-        const cards = document.querySelectorAll('.card-3d');
-        let animationFrameId;
+        // --- 5. وظيفة البحث (Search Functionality) ---
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.teacher-card');
+        const noResultsMsg = document.getElementById('noResults');
 
-        function animateCarousel() {
-            const centerX = carousel.scrollLeft + carousel.offsetWidth / 2;
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            let hasResults = false;
 
             cards.forEach(card => {
-                const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-                const distance = cardCenter - centerX;
-                
-                // تقليل معامل الدوران لجعل الحركة أكثر استقراراً
-                const rotateY = distance * -0.1; 
-                const scale = Math.max(0.7, 1 - Math.abs(distance) * 0.0012);
-                const opacity = Math.max(0.4, 1 - Math.abs(distance) * 0.0018);
-                
-                card.style.transform = `perspective(1000px) rotateY(${rotateY}deg) scale(${scale})`;
-                card.style.opacity = opacity;
-                
-                // التباين اللوني للعنصر النشط
-                if (Math.abs(distance) < card.offsetWidth / 2) {
-                    card.style.borderColor = 'var(--primary-color)';
-                    card.style.boxShadow = '0 0 25px var(--primary-glow)';
-                    card.style.zIndex = 10;
+                // البحث في اسم المعلم والنص داخل البطاقة (الشارة)
+                const text = card.innerText.toLowerCase();
+                if (text.includes(term)) {
+                    card.style.display = 'flex';
+                    hasResults = true;
                 } else {
-                    card.style.borderColor = 'var(--glass-border)';
-                    card.style.boxShadow = 'none';
-                    card.style.zIndex = 1;
+                    card.style.display = 'none';
                 }
             });
 
-            animationFrameId = requestAnimationFrame(animateCarousel);
-        }
-
-        // تشغيل حلقة الأنيميشن بشكل دائم
-        animationFrameId = requestAnimationFrame(animateCarousel);
-
+            // إظهار رسالة عدم وجود نتائج
+            if (hasResults) {
+                noResultsMsg.style.display = 'none';
+            } else {
+                noResultsMsg.style.display = 'block';
+            }
+        });
 
         // --- 6. محرك الفضاء السلس ---
         const canvas = document.getElementById('space-canvas');
