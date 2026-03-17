@@ -331,7 +331,7 @@
 
         /* --- القائمة الأفقية --- */
         .carousel-section {
-            padding: 10px 0 80px; /* زيادة الحشو السفلي قليلاً لضمان وصول آخر بطاقة */
+            padding: 10px 0 80px;
             position: relative;
             z-index: 2;
         }
@@ -378,13 +378,15 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 20px var(--primary-glow);
         }
 
+        /* تعديل لتوسيط المحتوى عمودياً بعد حذف الشارة */
         .card-content {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center; /* توسيط المحتوى */
             height: 100%;
-            justify-content: space-between;
             width: 100%;
+            text-align: center;
         }
 
         .img-box {
@@ -392,7 +394,7 @@
             border-radius: 50%;
             padding: 3px;
             background: linear-gradient(135deg, transparent, var(--primary-color));
-            margin-bottom: 15px;
+            margin-bottom: 20px; /* مسافة أكبر بين الصورة والاسم */
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
             transition: 0.3s;
         }
@@ -409,21 +411,11 @@
         }
 
         .card h3 {
-            font-size: 1.1rem;
-            text-align: center;
+            font-size: 1.2rem; /* تكبير الاسم قليلاً */
             line-height: 1.4;
-            margin-bottom: 10px;
+            margin: 0;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-        }
-
-        .card-badge {
-            background: rgba(255,255,255,0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: auto;
-            border: 1px solid rgba(255,255,255,0.05);
+            font-weight: 700;
         }
 
         .no-results {
@@ -501,6 +493,7 @@
             h1.site-title { font-size: 2.5rem; }
             .card { width: 300px; height: 380px; }
             .img-box { width: 120px; height: 120px; }
+            .card h3 { font-size: 1.4rem; }
         }
     </style>
 </head>
@@ -566,7 +559,7 @@
     <!-- شريط البحث -->
     <div class="search-container">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="ابحث عن حلقة باسم المعلم...">
+            <input type="text" id="searchInput" placeholder="ابحث باسم المعلم أو الحلقة...">
             <div class="search-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -583,96 +576,83 @@
                 <p>لا توجد نتائج مطابقة للبحث</p>
             </div>
 
-            <!-- المدرسين -->
-            <a href="Maad.html" class="card teacher-card">
+            <!-- المدرسين (تمت إضافة data-keywords للبحث المخفي) -->
+            <a href="Maad.html" class="card teacher-card" data-keywords="مدرس قرآن">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/MKQdRKCP/5866036315810368746-121.jpg" alt="معاذ"></div>
                     <h3>المدرس معاذ المحمد</h3>
-                    <span class="card-badge">مدرس قرآن</span>
                 </div>
             </a>
-            <a href="Awad.html" class="card teacher-card">
+            <a href="Awad.html" class="card teacher-card" data-keywords="مدرس تجويد">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/kXs9C3CT/5866036315810368745-121.jpg" alt="عوض"></div>
                     <h3>المدرس عوض فطراوي</h3>
-                    <span class="card-badge">مدرس تجويد</span>
                 </div>
             </a>
-            <a href="Taha.html" class="card teacher-card">
+            <a href="Taha.html" class="card teacher-card" data-keywords="حفص">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/rFVXQn49/5866036315810368748-121.jpg" alt="طه"></div>
                     <h3>المدرس طه المحمد</h3>
-                    <span class="card-badge">حفص</span>
                 </div>
             </a>
-            <a href="Modar.html" class="card teacher-card">
+            <a href="Modar.html" class="card teacher-card" data-keywords="قراءات">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/50BTmL2c/5866036315810368747-121.jpg" alt="مضر"></div>
                     <h3>المدرس مضر الشعار</h3>
-                    <span class="card-badge">قراءات</span>
                 </div>
             </a>
-            <a href="Tarage.html" class="card teacher-card">
+            <a href="Tarage.html" class="card teacher-card" data-keywords="تحفيظ">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/KvHqBJDP/5866036315810368737-121.jpg" alt="تراجي"></div>
                     <h3>المدرسة تراجي المصطفى</h3>
-                    <span class="card-badge">تحفيظ</span>
                 </div>
             </a>
-            <a href="Tahane.html" class="card teacher-card">
+            <a href="Tahane.html" class="card teacher-card" data-keywords="تجويد">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/9QNDWq2n/5866036315810368736-121.jpg" alt="تهاني"></div>
                     <h3>المدرسة تهاني</h3>
-                    <span class="card-badge">تجويد</span>
                 </div>
             </a>
-            <a href="Marwa.html" class="card teacher-card">
+            <a href="Marwa.html" class="card teacher-card" data-keywords="قسم النساء">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/6Q5fPZcT/5866036315810368740-121.jpg" alt="مروة"></div>
                     <h3>المدرسة مروة المصطفى</h3>
-                    <span class="card-badge">قسم النساء</span>
                 </div>
             </a>
-            <a href="Rawda.html" class="card teacher-card">
+            <a href="Rawda.html" class="card teacher-card" data-keywords="حفظ">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/8c8WTfRC/5866036315810368744-121.jpg" alt="روضة"></div>
                     <h3>المدرسة روضة المصطفى</h3>
-                    <span class="card-badge">حفظ</span>
                 </div>
             </a>
-            <a href="FatemaF.html" class="card teacher-card">
+            <a href="FatemaF.html" class="card teacher-card" data-keywords="أحكام">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/fy2NxmBp/5866036315810368742-121.jpg" alt="فاطمة"></div>
                     <h3>المدرسة فاطمة فطراوي</h3>
-                    <span class="card-badge">أحكام</span>
                 </div>
             </a>
-            <a href="FatemaM.html" class="card teacher-card">
+            <a href="FatemaM.html" class="card teacher-card" data-keywords="ترتيل">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/NjRntRR6/5866036315810368739-121.jpg" alt="فاطمة"></div>
                     <h3>المدرسة فاطمة المحمود</h3>
-                    <span class="card-badge">ترتيل</span>
                 </div>
             </a>
-            <a href="Aia.html" class="card teacher-card">
+            <a href="Aia.html" class="card teacher-card" data-keywords="قراءة">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/6q3s5TBK/5866036315810368743-121.jpg" alt="اية"></div>
                     <h3>المدرسة اية الايوب</h3>
-                    <span class="card-badge">قراءة</span>
                 </div>
             </a>
-            <a href="Marwazainab.html" class="card teacher-card">
+            <a href="Marwazainab.html" class="card teacher-card" data-keywords="مراجعة">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/Dzy6JJTH/5866036315810368738-121.jpg" alt="مروة"></div>
                     <h3>المدرسة مروة المصطفى</h3>
-                    <span class="card-badge">مراجعة</span>
                 </div>
             </a>
-            <a href="Aliaa.html" class="card teacher-card">
+            <a href="Aliaa.html" class="card teacher-card" data-keywords="تسميع">
                 <div class="card-content">
                     <div class="img-box"><img src="https://i.postimg.cc/cCsx7sZF/5866036315810368741-121.jpg" alt="علياء"></div>
                     <h3>المدرسة علياء عبدالقادر</h3>
-                    <span class="card-badge">تسميع</span>
                 </div>
             </a>
         </div>
@@ -760,7 +740,7 @@
             if(e.target === modalOverlay) closeModal();
         });
 
-        // --- 5. وظيفة البحث (Search Functionality) ---
+        // --- 5. وظيفة البحث (المحدثة) ---
         const searchInput = document.getElementById('searchInput');
         const cards = document.querySelectorAll('.teacher-card');
         const noResultsMsg = document.getElementById('noResults');
@@ -770,8 +750,13 @@
             let hasResults = false;
 
             cards.forEach(card => {
-                const text = card.innerText.toLowerCase();
-                if (text.includes(term)) {
+                // البحث في النص الظاهر (اسم المعلم)
+                const visibleText = card.innerText.toLowerCase();
+                // البحث في الكلمات المفتاحية المخفية (نوع الحلقة/التخصص)
+                const keywords = (card.dataset.keywords || "").toLowerCase();
+                
+                // إذا وجد النص في الاسم أو في نوع الحلقة
+                if (visibleText.includes(term) || keywords.includes(term)) {
                     card.style.display = 'flex';
                     hasResults = true;
                 } else {
